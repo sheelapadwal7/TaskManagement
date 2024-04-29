@@ -1,6 +1,7 @@
 package com.task.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.task.enums.Status;
 
@@ -11,7 +12,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -40,9 +42,18 @@ public class Task {
 	@Column(name = "actual_completion_Date")
 	private Date actualCompletionDate;
 
-	
+	@ManyToMany(mappedBy = "tasks")
+    private List<Student> student;
 
 	
+
+	public List<Student> getStudent() {
+		return student;
+	}
+
+	public void setStudent(List<Student> student) {
+		this.student = student;
+	}
 
 	public Integer getId() {
 		return id;

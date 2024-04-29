@@ -17,6 +17,6 @@ import com.task.model.Admin;
 public interface AdminRepository extends JpaRepository<Admin, Integer> {
 	Optional<Admin> findByUserName(String userName);
 
-	Admin findFirst();
+	//Admin findFirst();
     
 }

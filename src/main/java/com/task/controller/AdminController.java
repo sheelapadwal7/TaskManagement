@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.task.model.Admin;
+import com.task.model.Task;
 import com.task.service.AdminService;
+import com.task.service.TaskService;
 
 /**
  *
@@ -33,6 +35,29 @@ public class AdminController {
 
 	@Autowired
 	AdminService adminService;
+	
+	@Autowired
+	TaskService taskService;
+
+	@PostMapping("/addtask")
+	public ResponseEntity<Task> createTask(@RequestBody Task task) {
+		Task createdTask = taskService.createTask(task);
+		return ResponseEntity.ok(createdTask);
+	}
+
+	/*
+	 * @PutMapping("/{id}") public ResponseEntity<Task> updateTask(@PathVariable
+	 * Integer id, @RequestBody Task updatedTaskDetails) { Task updatedTask =
+	 * adminService.updateTask(id, updatedTaskDetails); if (updatedTask != null) {
+	 * return ResponseEntity.ok(updatedTask); } return
+	 * ResponseEntity.notFound().build(); }
+	 */
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteTask(@PathVariable Integer taskId) {
+		adminService.deleteTask(taskId);
+		return ResponseEntity.noContent().build();
+	}
 
 	@GetMapping("")
 	public ResponseEntity<?> getAdmin() {
@@ -57,7 +82,7 @@ public class AdminController {
 		}
 	}
 
-	@PostMapping()
+	@PostMapping("/add")
 	public ResponseEntity<?> createAdmin(@RequestBody Admin admin) {
 
 //		List<String> error = adminService.validate(admin);
@@ -66,11 +91,12 @@ public class AdminController {
 //
 //		}
 		adminService.AddAdmin(admin);
-		return ResponseEntity.ok().body("Student added successfully.");
+		return ResponseEntity.ok().body("Admin added successfully.");
 
 	}
+
 	@PutMapping("/{id}")
-	public ResponseEntity<?> putMethodName(@PathVariable Integer id, @RequestBody Admin admin) {
+	public ResponseEntity<?> updateAdmin(@PathVariable Integer id, @RequestBody Admin admin) {
 		// TODO: process PUT request
 
 //		List<String> error = adminService.validate(admin);
@@ -82,16 +108,6 @@ public class AdminController {
 
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteStudent(@PathVariable Integer id) {
 
-		boolean deleted = adminService.deleteStudent(id);
-
-		if (deleted) {
-			return ResponseEntity.ok("Admin with ID " + id + " deleted successfully.");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("admin with ID " + id + " not found.");
-		}
-	}
 
 }

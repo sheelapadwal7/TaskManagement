@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.task.DTO.LoginRequestDTO;
 import com.task.Repository.AdminRepository;
+import com.task.Repository.TaskRepository;
 import com.task.model.Admin;
+import com.task.model.Task;
 
 
 
@@ -20,6 +22,9 @@ public class AdminService {
 
 	@Autowired
 	AdminRepository adminRepository;
+	
+	@Autowired
+	TaskRepository taskRepository;
 	
 	
 
@@ -69,16 +74,23 @@ public class AdminService {
 
 	}
 
-	// Delete Admin by id
-	public boolean deleteStudent(Integer id) {
-		boolean exists = adminRepository.existsById(id);
-		if (exists) {
-			adminRepository.deleteById(id);
-			return true;
-		} else {
-			return false;
-		}
-	}
+
+    public Task updateTask(Integer id, Task updatedTaskDetails) {
+        Task existingTask = taskRepository.findById(id).orElse(null);
+        if (existingTask != null) {
+            // Update existingTask with updatedTaskDetails
+            existingTask.setName(updatedTaskDetails.getName());
+            existingTask.setDescription(updatedTaskDetails.getDescription());
+            existingTask.setCompletionDate(updatedTaskDetails.getCompletionDate());
+            return taskRepository.save(existingTask);
+        }
+        return null; // Task with taskId not found
+    }
+
+    public void deleteTask(Integer id) {
+        taskRepository.deleteById(id);
+    }
+	
 
 	// update admin by id
 	public Admin updateAdmin(int requirementid, Admin admin) {

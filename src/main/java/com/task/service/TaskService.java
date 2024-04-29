@@ -40,19 +40,24 @@ public class TaskService {
 	}
 	
 	
-	
-	public Task startTask(Integer studentId, String taskName, String taskDesc, Date completionDate, Status status, Date actualCompletionDate) {
- 
 
-        // Create the task
-        Task task = new Task();
-        task.setStatus(status);
-        task.setActualCompletionDate(actualCompletionDate);
-
-        // Save the task in the repository
-        return taskRepository.save(task);
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
     }
-	
+
+    public Task getTaskDetails(Integer taskId) {
+        return taskRepository.findById(taskId).orElse(null);
+    }
+
+    public void updateTaskStatus(Integer taskId, Status newStatus) {
+        Task task = taskRepository.findById(taskId).orElse(null);
+        if (task != null) {
+            task.setStatus(newStatus);
+            taskRepository.save(task);
+        }
+    }
+
+    
 	
 	
 	public Optional<Task> getTaskbyId(Integer id)

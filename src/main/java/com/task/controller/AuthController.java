@@ -45,7 +45,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/student/login")
-	public LoginResponseDTO studentLogstafin(@RequestBody LoginRequestDTO loginRequestDto) {
+	public LoginResponseDTO studentLogin(@RequestBody LoginRequestDTO loginRequestDto) {
 
 		LoginResponseDTO loginResponseDto = new LoginResponseDTO();
 

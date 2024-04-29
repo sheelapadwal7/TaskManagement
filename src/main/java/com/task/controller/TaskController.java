@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.task.enums.Status;
 import com.task.model.Admin;
 import com.task.model.Student;
 import com.task.model.Task;
@@ -26,12 +27,35 @@ public class TaskController {
 	
 	
 	@Autowired
-	TaskService taskservice;
+	TaskService taskService;
 	
-	@GetMapping("")
+	@GetMapping
+    public ResponseEntity<List<Task>> getAllTasks() {
+        List<Task> tasks = taskService.getAllTasks();
+        return ResponseEntity.ok(tasks);
+    }
+
+    @GetMapping("/{taskId}")
+    public ResponseEntity<Task> getTaskDetails(@PathVariable Integer taskId) {
+        Task task = taskService.getTaskDetails(taskId);
+        if (task != null) {
+            return ResponseEntity.ok(task);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{taskId}/status")
+    public ResponseEntity<Void> updateTaskStatus(@PathVariable Integer taskId, @RequestBody Status newStatus) {
+        taskService.updateTaskStatus(taskId, newStatus);
+        return ResponseEntity.ok().build();
+    }
+
+	
+	@GetMapping("/get")
 	public ResponseEntity<?> getTask(@RequestBody Task task) {
 
-		List<Task> adminL = taskservice.getTask();
+		List<Task> adminL = taskService.getTask();
 		if (adminL.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("admin not found");
 		}
@@ -42,7 +66,7 @@ public class TaskController {
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getTaskById(@PathVariable Integer id) {
 
-		Optional<Task> taskId = taskservice.getTaskbyId(id);
+		Optional<Task> taskId = taskService.getTaskbyId(id);
 		if (taskId==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("task by id not found");
 
@@ -58,27 +82,27 @@ public class TaskController {
 	public ResponseEntity<?> updateStudent(@PathVariable Integer id, @RequestBody Task task) {
 
 		// Check if student exists
-		Task taskex = taskservice.updateTask(id, task);
+		Task taskex = taskService.updateTask(id, task);
 		if (taskex==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("task with id " + id + "not found.");
 		}
 
 		// Update the student
-		taskservice.updateTask(id, task);
+		taskService.updateTask(id, task);
 		return ResponseEntity.ok().body("task with ID " + id + " updated successfully.");
 	}
 
 	
-	@PostMapping(" ")
+	@PostMapping("/add")
 	public ResponseEntity<?> createTask(@RequestBody Task task) {
-		taskservice.createTask(task);
+		taskService.createTask(task);
 		return ResponseEntity.ok().body("Task added successfully.");
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteStudent(@PathVariable Integer id) {
 
-		boolean deleted = taskservice.deleteTask(id);
+		boolean deleted = taskService.deleteTask(id);
 
 		if (deleted) {
 			return ResponseEntity.ok("Task with ID " + id + " deleted successfully.");

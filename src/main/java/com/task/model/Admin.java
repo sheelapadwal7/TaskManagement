@@ -40,17 +40,7 @@ public class Admin {
     
     @Column(name="user_Name")
     private String userName;
-//    
-//	@OneToMany(mappedBy = "admin")
-//	private Task task;
 
-//	public Task getTask() {
-//		return task;
-//	}
-//
-//	public void setTask(Task task) {
-//		this.task = task;
-//	}
 
 	public Integer getId() {
 		return id;

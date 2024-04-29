@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.task.model.Student;
+import com.task.model.Task;
 import com.task.service.StudentService;
 
 @RestController
@@ -25,8 +26,29 @@ import com.task.service.StudentService;
 public class StudentController {
 	@Autowired
 	StudentService studentservice;
+	
+	 @Autowired
+	    private StudentService studentService;
 
-	@GetMapping("")
+	    @GetMapping
+	    public ResponseEntity<List<Task>> getMyTasks(@RequestParam Integer studentId) {
+	        List<Task> tasks = studentService.getMyTasks(studentId);
+	        return ResponseEntity.ok(tasks);
+	    }
+
+	    @PostMapping("/start/{taskId}")
+	    public ResponseEntity<Void> startTask(@PathVariable Integer taskId) {
+	        studentService.startTask(taskId);
+	        return ResponseEntity.noContent().build();
+	    }
+
+	    @PostMapping("/complete/{taskId}")
+	    public ResponseEntity<Void> completeTask(@PathVariable Integer taskId) {
+	        studentService.completeTask(taskId);
+	        return ResponseEntity.noContent().build();
+	    }
+
+	@GetMapping("/get")
 	public ResponseEntity<?> getStudent(@RequestBody Student student) {
 
 		List<Student> students = studentservice.getStudent();
@@ -67,7 +89,7 @@ public class StudentController {
 	}
 
 	
-	@PostMapping(" ")
+	@PostMapping("/add")
 	public ResponseEntity<?> addStudent(@RequestBody Student student) {
 
 		System.out.println("first");

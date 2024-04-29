@@ -1,5 +1,6 @@
 package com.task.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,13 +12,23 @@ import org.springframework.stereotype.Service;
 
 import com.task.DTO.LoginRequestDTO;
 import com.task.Repository.StudentRepository;
+import com.task.Repository.StudentTaskRepository;
+import com.task.Repository.TaskRepository;
+import com.task.enums.Status;
 import com.task.model.Student;
+import com.task.model.StudentTask;
+import com.task.model.Task;
 
 @Service
 public class StudentService {
 
 	@Autowired
 	StudentRepository studentrepository;
+	@Autowired
+	TaskRepository taskRepository;
+	
+	@Autowired
+	StudentTaskRepository studentTaskRepository;
 
 	public Student login(LoginRequestDTO loginRequestDto) {
 		Optional<Student> studentO = studentrepository.findByUserName(loginRequestDto.getUserName());
@@ -61,6 +72,40 @@ public class StudentService {
 	  return studentrepository.save(student);
 	  
 	 } 
+	
+	
+	public List<Task> getMyTasks(Integer studentId) {
+	    List<Task> myTasks = new ArrayList<>();
+	    
+	    List<StudentTask> mappings = studentTaskRepository.findByStudentId(studentId);
+	    
+	    for (StudentTask mapping : mappings) {
+	        Task task = mapping.getTask();
+	        if (task != null) {
+	            myTasks.add(task);
+	        }
+	    }
+	    
+	    return myTasks;
+	}
+
+	
+	
+    public void startTask(Integer taskId) {
+        Task task = taskRepository.findById(taskId).orElse(null);
+        if (task != null) {
+            task.setStatus(Status.INPROGRESS);
+            taskRepository.save(task);
+        }
+    }
+        
+        public void completeTask(Integer taskId) {
+            Task task = taskRepository.findById(taskId).orElse(null);
+            if (task != null) {
+                task.setStatus(Status.COMPLETED);
+                taskRepository.save(task);
+            }
+        }
 
 	public Student update(Integer id, Student student) {
 		Student existingstudent = studentrepository.findById(id).orElse(null);

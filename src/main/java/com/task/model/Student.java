@@ -1,6 +1,7 @@
 package com.task.model;
 
 import java.util.Date;
+import java.util.List;
 
 import com.task.enums.Gender;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -45,6 +47,20 @@ public class Student {
 
 	@Column(name = "password")
 	private String password;
+	
+	@ManyToMany
+    private List<Task> tasks;
+
+
+
+	public List<Task> getTasks() {
+		return tasks;
+	}
+
+
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
 
 
 	public Integer getId() {
