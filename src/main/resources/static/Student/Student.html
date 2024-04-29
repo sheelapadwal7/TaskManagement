@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    /* Add your custom styles here */
+  </style>
+</head>
+<body>
+
+<!-- Navigation bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Student Dashboard</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">View Tasks</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Content area -->
+<div class="container mt-5">
+  <h2>View Tasks</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <h4>Task 1: Complete Assignment</h4>
+      <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <div class="form-group">
+        <label for="taskStatus">Task Status</label>
+        <select class="form-control" id="taskStatus">
+          <option value="completed">Completed</option>
+          <option value="pending">Pending</option>
+          <option value="not-clear">Not Clear</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="fileUpload">Upload File</label>
+        <input type="file" class="form-control-file" id="fileUpload">
+      </div>
+      <div class="form-group">
+        <label for="projectLink">Project Link</label>
+        <input type="text" class="form-control" id="projectLink" placeholder="Enter project link">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    <!-- Add more task sections here dynamically -->
+  </div>
+</div>
+
+
+<!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
