@@ -13,7 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -140,6 +139,12 @@ public class Student {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+
+	public void setProfessor(Object object) {
+		// TODO Auto-generated method stub
+		
 	}
 
 		

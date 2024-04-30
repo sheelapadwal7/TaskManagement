@@ -18,7 +18,11 @@ public class ProfessorController {
     @Autowired
     private ProfessorService professorService;
 
-    @PostMapping("/login")
+    public ProfessorController(ProfessorService professorService) {
+		this.professorService = professorService;
+	}
+
+	@PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequestDto) {
         Professor professor = professorService.login(loginRequestDto);
         if (professor != null) {
@@ -30,7 +34,7 @@ public class ProfessorController {
 
     @GetMapping
     public List<Professor> getAllProfessors() {
-        return professorService.getAllProfessors();
+        return professorService.getProfessor();
     }
 
     @GetMapping("/{id}")
@@ -52,7 +56,7 @@ public class ProfessorController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProfessor(@PathVariable("id") Integer id, @RequestBody Professor professor) {
         try {
-            Professor updatedProfessor = professorService.updateProfessor(id, professor);
+            Professor updatedProfessor = professorService.update(id, professor);
             return ResponseEntity.ok(updatedProfessor);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

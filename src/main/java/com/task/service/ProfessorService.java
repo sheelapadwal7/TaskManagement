@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.task.DTO.LoginRequestDTO;
 import com.task.Repository.ProfessorRepository;
@@ -15,75 +15,91 @@ import com.task.model.Professor;
 @Service
 public class ProfessorService {
 
-    @Autowired
-    private ProfessorRepository professorRepository;
+	@Autowired
+	private final ProfessorRepository professorRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	private final BCryptPasswordEncoder passwordEncoder;
+	
+	public ProfessorService(ProfessorRepository professorRepository, BCryptPasswordEncoder passwordEncoder) {
+		
+		this.professorRepository = professorRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
 
-    public Professor login(LoginRequestDTO loginRequestDto) {
-        // Find professor by username
-        Optional<Professor> professorOptional = professorRepository.findByUserName(loginRequestDto.getUserName());
+	
 
-        if (professorOptional.isPresent()) {
-            Professor professor = professorOptional.get();
+	public Professor login(LoginRequestDTO loginRequestDto) {
+		Optional<Professor> professors = professorRepository.findByUserName(loginRequestDto.getUserName());
 
-            // Check if the password matches
-            if (bCryptPasswordEncoder.matches(loginRequestDto.getPassword(), professor.getPassword())) {
-                return professor;
-            }
-        }
+		System.out.println(professors);
+		Professor professor = null;
 
-        return null; // Return null if login fails
-    }
+		if (professors.isPresent()) {
 
-    public List<Professor> getAllProfessors() {
-        return professorRepository.findAll();
-    }
+			Professor professorsdb = professors.get();
 
-    public Optional<Professor> getProfessorById(Integer id) {
-        return professorRepository.findById(id);
-    }
+			
 
-    @Transactional
-    public Professor addProfessor(Professor professor) {
-        // Encrypt password before saving
-        String hashedPassword = bCryptPasswordEncoder.encode(professor.getPassword());
-        professor.setPassword(hashedPassword);
-        return professorRepository.save(professor);
-    }
+//        	System.out.print("passwrod user: " + loginRequestDto.getPassword() + " from db:" + Professordb.getPassword());
+			if (passwordEncoder.matches(loginRequestDto.getPassword(), professorsdb.getPassword())) {
+				professor = professorsdb;
+			}
 
-    @Transactional
-    public Professor updateProfessor(Integer id, Professor professor) {
-        Optional<Professor> existingProfessorOptional = professorRepository.findById(id);
-        if (existingProfessorOptional.isPresent()) {
-            Professor existingProfessor = existingProfessorOptional.get();
-            // Update existing professor's fields
-            existingProfessor.setFirstName(professor.getFirstName());
-            existingProfessor.setEmail(professor.getEmail());
-            existingProfessor.setContactNumber(professor.getContactNumber());
-            existingProfessor.setDob(professor.getDob());
-            existingProfessor.setUserName(professor.getUserName());
+		}
 
-            // Check if the password is being updated
-            if (professor.getPassword() != null && !professor.getPassword().isEmpty()) {
-                // Re-encrypt the password
-                String hashedPassword = bCryptPasswordEncoder.encode(professor.getPassword());
-                existingProfessor.setPassword(hashedPassword);
-            }
+		return professor;
+	}
 
-            return professorRepository.save(existingProfessor);
-        } else {
-            throw new IllegalArgumentException("Professor with id " + id + " does not exist");
-        }
-    }
+	public List<Professor> getProfessor() {
+		return professorRepository.findAll();
 
-    @Transactional
-    public boolean deleteProfessor(Integer id) {
-        if (professorRepository.existsById(id)) {
-            professorRepository.deleteById(id);
-            return true;
-        }
-        return false;
-    }
+	}
+
+	public Optional<Professor> getProfessorById(Integer id) {
+		return professorRepository.findById(id);
+	}
+
+	
+	public Professor addProfessor(Professor professor) {
+		if (professor.getPassword() != null) {
+			String hashedPassword = passwordEncoder.encode(professor.getPassword());
+			professor.setPassword(hashedPassword);
+		}
+		return professorRepository.save(professor);
+	}
+
+	public Professor update(Integer id, Professor professor) {
+		Optional<Professor> existingProfessorOptional = professorRepository.findById(id);
+		if (existingProfessorOptional.isPresent()) {
+			Professor existingProfessor = existingProfessorOptional.get();
+			existingProfessor.setFirstName(professor.getFirstName());
+			existingProfessor.setEmail(professor.getEmail());
+			existingProfessor.setContactNumber(professor.getContactNumber());
+			existingProfessor.setDob(professor.getDob());
+			existingProfessor.setUserName(professor.getUserName());
+
+			// Check if the password is being updated
+			if (professor.getPassword() != null && !professor.getPassword().isEmpty()) {
+				// Re-encrypt the password
+				String hashedPassword = passwordEncoder.encode(professor.getPassword());
+				existingProfessor.setPassword(hashedPassword);
+			}
+
+			return professorRepository.save(existingProfessor);
+		} else {
+			throw new IllegalArgumentException("Professor with id " + id + " does not exist");
+		}
+	}
+
+	
+	public boolean deleteProfessor(Integer id) {
+		Optional<Professor> professorOptional = professorRepository.findById(id);
+		if (professorOptional.isPresent()) {
+			professorRepository.deleteById(id);
+			return true;
+		}
+		return false;
+	}
+
 }
