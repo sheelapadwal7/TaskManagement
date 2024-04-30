@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.task.Repository.AdminRepository;
 import com.task.Repository.StudentRepository;
 import com.task.Repository.TaskRepository;
-
+import com.task.enums.Status;
 import com.task.model.Task;
 
 @Service
@@ -62,5 +62,33 @@ public class TaskService {
 		}
 		return false;
 	}
+	
+	public boolean startTask(Integer taskId) {
+		Optional<Task> optionalTask = taskRepository.findById(taskId);
+		if (optionalTask.isPresent()) {
+			Task task = optionalTask.get();
+			task.setStatus(Status.INPROGRESS);
+			taskRepository.save(task);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean completeTask(Integer taskId) {
+		Optional<Task> optionalTask = taskRepository.findById(taskId);
+		if (optionalTask.isPresent()) {
+			Task task = optionalTask.get();
+			task.setStatus(Status.COMPLETED);
+			taskRepository.save(task);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+	
+	
 
 }
