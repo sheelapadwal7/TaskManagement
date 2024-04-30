@@ -8,6 +8,7 @@ package com.task.Repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.task.model.Admin;
@@ -17,6 +18,7 @@ import com.task.model.Admin;
 public interface AdminRepository extends JpaRepository<Admin, Integer> {
 	Optional<Admin> findByUserName(String userName);
 
-	//Admin findFirst();
+	//@Query(value = "select t.*, st.* from task t left join student_tasks st on st.tasks_task_id = t.task_id where t.task_id = ?")
+	//CustomDto findFirst(Integer taskId);
     
 }
