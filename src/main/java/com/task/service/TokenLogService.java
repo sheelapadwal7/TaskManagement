@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.task.Repository.TokenLogRepository;
-import com.task.enums.LinkType;
+
 import com.task.model.TokenLog;
 
 @Service
@@ -19,33 +19,23 @@ public class TokenLogService {
 	@Autowired
 	TokenLogRepository tokenLogRepository;
 
-	/*
-	 * public boolean verifyToken(String token) {
-	 * 
-	 * Optional<TokenLog> tokenLog = tokenLogRepository.findFirstByToken(token);
-	 * 
-	 * if (tokenLog.isPresent()) { TokenLog log = tokenLog.get(); return
-	 * log.isValid(); }
-	 * 
-	 * return false; }
-	 */
+	// Generate token
+	public String generateToken() {
+		String token = UUID.randomUUID().toString();
 
-	public boolean verifyToken(String token) {
-		// Retrieve the token log
-		Optional<TokenLog> tokenLogOptional = tokenLogRepository.findByToken(token);
+		LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(1);
 
-		if (tokenLogOptional.isPresent()) {
-			TokenLog log = tokenLogOptional.get();
-			if (log.isValid()) {
+		TokenLog tokenLog = new TokenLog();
+		tokenLog.setToken(token);
+		tokenLog.setExpiryTime(expiryTime);
+		tokenLog.setValid(true); // Assuming token is initially valid
 
-				LocalDateTime expiryTime = log.getExpiryTime();
-				return expiryTime != null && !expiryTime.isBefore(LocalDateTime.now());
-			}
-		}
+		tokenLogRepository.save(tokenLog);
 
-		return false;
+		return token;
 	}
-	
+
+	// Valid token
 	public boolean isValidToken(String token) {
 		Optional<TokenLog> tokenLogOptional = tokenLogRepository.findByToken(token);
 
@@ -53,46 +43,30 @@ public class TokenLogService {
 			TokenLog tokenLog = tokenLogOptional.get();
 			if (tokenLog.isValid()) {
 				LocalDateTime expiryTime = tokenLog.getExpiryTime();
-				// Check if the token is not expired
+
 				return !isTokenExpired(expiryTime);
 			}
 		}
-		// Token not found or invalid
 		return false;
 	}
-	
-	
 
 	private boolean isTokenExpired(LocalDateTime expiryTime) {
 		return expiryTime != null && expiryTime.isBefore(LocalDateTime.now());
 	}
 
+	// invalidate token
+	public boolean invalidateToken(String token) {
+		Optional<TokenLog> tokenLogOptional = tokenLogRepository.findByToken(token);
 
-	public String generateToken(int studentId, String email) {
-		String token = UUID.randomUUID().toString();
-
-		LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(1);
-
-		TokenLog tokenLog = new TokenLog();
-		tokenLog.setToken(token);
-		tokenLog.setValid(true);
-		tokenLog.setExpiryTime(expiryTime);
-
-		addLogForStudentLogin(token, studentId, email, expiryTime);
-
-		return token;
-	}
-
-	public TokenLog addLogForStudentLogin(String token, int studentId, String email, LocalDateTime expiryTime) {
-		TokenLog tl = new TokenLog();
-		tl.setLinkId(studentId);
-		tl.setLinkType(LinkType.STUDENT);
-		tl.setToken(token);
-		tl.setValid(true);
-		tl.setCreatedAt(LocalDateTime.now());
-		tl.setUserName(email);
-		tl.setExpiryTime(expiryTime);
-		return tokenLogRepository.save(tl);
+		if (tokenLogOptional.isPresent()) {
+			TokenLog log = tokenLogOptional.get();
+			log.setValid(false);
+			log.setExpiryTime(LocalDateTime.now().plusMinutes(1));
+			log.setLogoutTime(LocalDateTime.now());
+			tokenLogRepository.save(log);
+			return true;
+		}
+		return false;
 	}
 
 	public List<TokenLog> getTokenLog() {
@@ -117,14 +91,6 @@ public class TokenLogService {
 		if (tokenLog.getToken() == null) {
 			error.add("Token can not be empty");
 		}
-
-//		if (tokenLog.getPurpose() == null) {
-//			error.add("Purpose can not be empty");
-//		}
-
-		if (tokenLog.getLinkType() == null) {
-			error.add("LinkType can not be empty");
-		}
 		if (tokenLog.getIp() == null) {
 			error.add("IP can not be empty");
 		}
@@ -140,12 +106,21 @@ public class TokenLogService {
 		return error;
 	}
 
+	public TokenLog addLogForStudentLogin(String token, int studentId, String email, LocalDateTime expiryTime) {
+		TokenLog tl = new TokenLog();
+
+		tl.setToken(token);
+		tl.setValid(true);
+
+		tl.setUserName(email);
+		tl.setExpiryTime(expiryTime); // Set expiry time
+		return tokenLogRepository.save(tl);
+	}
+
 	public TokenLog updateTokenLog(Integer id, TokenLog tokenLog) {
 		TokenLog existingStaff = tokenLogRepository.findById(id).orElse(null);
 		existingStaff.setUserName(tokenLog.getUserName());
 		existingStaff.setToken(tokenLog.getToken());
-//		existingStaff.setPurpose(tokenLog.getPurpose());
-		existingStaff.setLinkType(tokenLog.getLinkType());
 		existingStaff.setIp(tokenLog.getIp());
 		existingStaff.setLinkId(tokenLog.getLinkId());
 		existingStaff.setAttempt(tokenLog.getAttempt());
@@ -165,19 +140,13 @@ public class TokenLogService {
 
 	}
 
-
-	public boolean invalidateToken(String token) {
-		Optional<TokenLog> tokenLogOptional = tokenLogRepository.findByToken(token);
-
-		if (tokenLogOptional.isPresent()) {
-			TokenLog log = tokenLogOptional.get();
-			log.setValid(false);
-			log.setExpiryTime(LocalDateTime.now().plusMinutes(1));
-			log.setLogout(LocalDateTime.now());
-			tokenLogRepository.save(log);
-			return true;
+	public boolean verifyToken(String token) {
+		Optional<TokenLog> tokenLogO = tokenLogRepository.findByToken(token);
+		if (!tokenLogO.isPresent()) {
+			return false;
 		}
-		return false;
+
+		return tokenLogO.get().isValid();
 	}
 
 }

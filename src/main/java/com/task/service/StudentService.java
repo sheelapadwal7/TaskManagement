@@ -1,13 +1,11 @@
 package com.task.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.task.DTO.LoginRequestDTO;
@@ -16,7 +14,7 @@ import com.task.Repository.StudentTaskRepository;
 import com.task.Repository.TaskRepository;
 import com.task.enums.Status;
 import com.task.model.Student;
-import com.task.model.StudentTask;
+
 import com.task.model.Task;
 
 @Service
@@ -26,7 +24,7 @@ public class StudentService {
 	StudentRepository studentrepository;
 	@Autowired
 	TaskRepository taskRepository;
-	
+
 	@Autowired
 	StudentTaskRepository studentTaskRepository;
 
@@ -61,52 +59,18 @@ public class StudentService {
 		return studentrepository.findById(id);
 	}
 
-	public Student addStudent(Student student) { 
-	
-	  
-	  BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
-	  String hashedPassword = bCryptPasswordEncoder.encode(student.getPassword());
-	  student.setPassword(hashedPassword);
-	  
-	  // Save the student to the database Student savedStudent =
-	  return studentrepository.save(student);
-	  
-	 } 
-	
-	
-	public List<Task> getMyTasks(Integer studentId) {
-	    List<Task> myTasks = new ArrayList<>();
-	    
-	    List<StudentTask> mappings = studentTaskRepository.findByStudentId(studentId);
-	    
-	    for (StudentTask mapping : mappings) {
-	        Task task = mapping.getTask();
-	        if (task != null) {
-	            myTasks.add(task);
-	        }
-	    }
-	    
-	    return myTasks;
+	public Student addStudent(Student student) {
+
+		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+		String hashedPassword = bCryptPasswordEncoder.encode(student.getPassword());
+		student.setPassword(hashedPassword);
+
+		// Save the student to the database Student savedStudent =
+		return studentrepository.save(student);
+
 	}
 
 	
-	
-    public void startTask(Integer taskId) {
-        Task task = taskRepository.findById(taskId).orElse(null);
-        if (task != null) {
-            task.setStatus(Status.INPROGRESS);
-            taskRepository.save(task);
-        }
-    }
-        
-        public void completeTask(Integer taskId) {
-            Task task = taskRepository.findById(taskId).orElse(null);
-            if (task != null) {
-                task.setStatus(Status.COMPLETED);
-                taskRepository.save(task);
-            }
-        }
-
 	public Student update(Integer id, Student student) {
 		Student existingstudent = studentrepository.findById(id).orElse(null);
 		existingstudent.setFirstName(student.getFirstName());
@@ -114,7 +78,7 @@ public class StudentService {
 		existingstudent.setEmail(student.getEmail());
 		existingstudent.setContactNumber(student.getContactNumber());
 		existingstudent.setDob(student.getDob());
-	
+
 		existingstudent.setPassword(student.getPassword());
 		existingstudent.setUserName(student.getUserName());
 		return studentrepository.save(existingstudent);
@@ -128,5 +92,30 @@ public class StudentService {
 		}
 		return false;
 	}
+	
+	public boolean startTask(Integer taskId) {
+		Optional<Task> optionalTask = taskRepository.findById(taskId);
+		if (optionalTask.isPresent()) {
+			Task task = optionalTask.get();
+			task.setStatus(Status.INPROGRESS);
+			taskRepository.save(task);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean completeTask(Integer taskId) {
+		Optional<Task> optionalTask = taskRepository.findById(taskId);
+		if (optionalTask.isPresent()) {
+			Task task = optionalTask.get();
+			task.setStatus(Status.COMPLETED);
+			taskRepository.save(task);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 }

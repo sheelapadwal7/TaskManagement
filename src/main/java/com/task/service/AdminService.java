@@ -75,17 +75,7 @@ public class AdminService {
 	}
 
 
-    public Task updateTask(Integer id, Task updatedTaskDetails) {
-        Task existingTask = taskRepository.findById(id).orElse(null);
-        if (existingTask != null) {
-            // Update existingTask with updatedTaskDetails
-            existingTask.setName(updatedTaskDetails.getName());
-            existingTask.setDescription(updatedTaskDetails.getDescription());
-            existingTask.setCompletionDate(updatedTaskDetails.getCompletionDate());
-            return taskRepository.save(existingTask);
-        }
-        return null; // Task with taskId not found
-    }
+
 
     public void deleteTask(Integer id) {
         taskRepository.deleteById(id);

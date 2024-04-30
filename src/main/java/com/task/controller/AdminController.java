@@ -35,7 +35,7 @@ public class AdminController {
 
 	@Autowired
 	AdminService adminService;
-	
+
 	@Autowired
 	TaskService taskService;
 
@@ -44,14 +44,6 @@ public class AdminController {
 		Task createdTask = taskService.createTask(task);
 		return ResponseEntity.ok(createdTask);
 	}
-
-	/*
-	 * @PutMapping("/{id}") public ResponseEntity<Task> updateTask(@PathVariable
-	 * Integer id, @RequestBody Task updatedTaskDetails) { Task updatedTask =
-	 * adminService.updateTask(id, updatedTaskDetails); if (updatedTask != null) {
-	 * return ResponseEntity.ok(updatedTask); } return
-	 * ResponseEntity.notFound().build(); }
-	 */
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteTask(@PathVariable Integer taskId) {
@@ -69,7 +61,7 @@ public class AdminController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getStudentById(@PathVariable Integer id) {
+	public ResponseEntity<?> getAdminById(@PathVariable Integer id) {
 		Optional<Admin> res = adminService.getAdminById(id);
 		if (res.isEmpty()) {
 
@@ -85,11 +77,6 @@ public class AdminController {
 	@PostMapping("/add")
 	public ResponseEntity<?> createAdmin(@RequestBody Admin admin) {
 
-//		List<String> error = adminService.validate(admin);
-//		if (!error.isEmpty()) {
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-//
-//		}
 		adminService.AddAdmin(admin);
 		return ResponseEntity.ok().body("Admin added successfully.");
 
@@ -97,17 +84,9 @@ public class AdminController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateAdmin(@PathVariable Integer id, @RequestBody Admin admin) {
-		// TODO: process PUT request
-
-//		List<String> error = adminService.validate(admin);
-//		if (error.size() != 0) {
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-//		}
 		adminService.updateAdmin(id, admin);
 		return ResponseEntity.ok().body("Updated Succesfully");
 
 	}
-
-
 
 }

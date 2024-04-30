@@ -1,11 +1,10 @@
 package com.task.model;
 
+
+
 import java.time.LocalDateTime;
 import java.util.Date;
 
-import javax.xml.crypto.KeySelector.Purpose;
-
-import com.task.enums.LinkType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +13,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,13 +31,6 @@ public class TokenLog {
 	@Column(name="link_id")
 	private int linkId;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name="link_type")
-	private LinkType linkType;
-
-//	@Enumerated(EnumType.STRING)
-//	@Column(name="purpose")
-//	private Purpose purpose;
 	
 	@Column(name="user_name", length = 128)
 	private String userName;
@@ -55,17 +49,28 @@ public class TokenLog {
 	private boolean isValid;
 	
 	@Column(name="created_at")
-	private LocalDateTime createdAt;
+	private Date createdAt;
 	
 	@Column(name="expiry_time") 
 	private LocalDateTime expiryTime;
 	
+	
 	@Column(name="logout_time") 
-	private LocalDateTime logout;
+	private LocalDateTime logoutTime;
 	
 	
 	
 	
+	
+	
+
+	public LocalDateTime getLogoutTime() {
+		return logoutTime;
+	}
+
+	public void setLogoutTime(LocalDateTime logoutTime) {
+		this.logoutTime = logoutTime;
+	}
 
 	public LocalDateTime getExpiryTime() {
 		return expiryTime;
@@ -87,13 +92,7 @@ public class TokenLog {
 		return linkId;
 	}
 
-	public LinkType getLinkType() {
-		return linkType;
-	}
-
-//	public Purpose getPurpose() {
-//		return purpose;
-//	}
+	
 
 	public String getUserName() {
 		return userName;
@@ -115,7 +114,9 @@ public class TokenLog {
 		return isValid;
 	}
 
-	
+	public Date getCreatedAt() {
+		return createdAt;
+	}
 
 	public void setId(int id) {
 		this.id = id;
@@ -125,14 +126,7 @@ public class TokenLog {
 		this.linkId = linkId;
 	}
 
-	public void setLinkType(LinkType linkType) {
-		this.linkType = linkType;
-	}
-
-//	public void setPurpose(Purpose purpose) {
-//		this.purpose = purpose;
-//	}
-
+	
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
@@ -153,25 +147,12 @@ public class TokenLog {
 		this.isValid = isValid;
 	}
 
-
-	public LocalDateTime getLogout() {
-		return logout;
-	}
-
-	public void setLogout(LocalDateTime logout) {
-		this.logout = logout;
-	}
-
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 	
-	
+}
+
 	
 
 	
-}

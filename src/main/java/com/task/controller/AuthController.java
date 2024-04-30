@@ -30,7 +30,7 @@ public class AuthController {
 
 	@Autowired
 	TokenLogService tokenlogservice;
-	
+
 	@Autowired
 	AdminService adminService;
 
@@ -60,7 +60,7 @@ public class AuthController {
 		}
 
 		// generate token
-		String token = tokenlogservice.generateToken(student.getId(), student.getEmail());
+		String token = tokenlogservice.generateToken();
 
 		// Response preparation
 		UserDTO userDto = new UserDTO();
@@ -68,7 +68,7 @@ public class AuthController {
 		userDto.setUserName(student.getUserName());
 
 		loginResponseDto.setStatus(true);
-		loginResponseDto.setMessage("Login Successfully");
+		loginResponseDto.setMessage(" Student Login Successfully");
 		loginResponseDto.setUser(userDto);
 		loginResponseDto.setToken(token);
 		// Response preparation end
@@ -77,6 +77,7 @@ public class AuthController {
 		return loginResponseDto;
 
 	}
+
 	@PostMapping("/admin/login")
 	public LoginResponseDTO adminlogin(@RequestBody LoginRequestDTO loginRequestDto) {
 		System.out.println("1");
@@ -93,16 +94,16 @@ public class AuthController {
 		}
 
 		// generate token
-		String token = tokenlogservice.generateToken(admin.getId(), admin.getEmail());
+		String token = tokenlogservice.generateToken();
 
 		// Response preparation
 		UserDTO userDto = new UserDTO();
 		userDto.setFirstName(admin.getFirstName());
-	
+
 		userDto.setUserName(admin.getUserName());
 
 		loginResponseDto.setStatus(true);
-		loginResponseDto.setMessage("Login Successfully");
+		loginResponseDto.setMessage(" Admin Login Successfully");
 		loginResponseDto.setUser(userDto);
 		loginResponseDto.setToken(token);
 		// Response preparation end
@@ -111,16 +112,14 @@ public class AuthController {
 		return loginResponseDto;
 
 	}
-	
-	
+
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(@RequestParam String token) {
-	    if (tokenlogservice.invalidateToken(token)) {
-	        return ResponseEntity.ok("Logout successfully");
-	    } else {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token not found");
-	    }
+		if (tokenlogservice.invalidateToken(token)) {
+			return ResponseEntity.ok("Logout successfully");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token not found");
+		}
 	}
-
 
 }

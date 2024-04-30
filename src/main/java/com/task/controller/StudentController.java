@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RestController;
 
 import com.task.model.Student;
-import com.task.model.Task;
+
 import com.task.service.StudentService;
 
 @RestController
@@ -26,27 +26,29 @@ import com.task.service.StudentService;
 public class StudentController {
 	@Autowired
 	StudentService studentservice;
-	
-	 @Autowired
-	    private StudentService studentService;
 
-	    @GetMapping
-	    public ResponseEntity<List<Task>> getMyTasks(@RequestParam Integer studentId) {
-	        List<Task> tasks = studentService.getMyTasks(studentId);
-	        return ResponseEntity.ok(tasks);
-	    }
+	@Autowired
+	private StudentService studentService;
 
-	    @PostMapping("/start/{taskId}")
-	    public ResponseEntity<Void> startTask(@PathVariable Integer taskId) {
-	        studentService.startTask(taskId);
-	        return ResponseEntity.noContent().build();
-	    }
+	@PostMapping("/start/{taskId}")
+	public ResponseEntity<String> startTask(@PathVariable Integer taskId) {
+		boolean success = studentService.startTask(taskId);
+		if (success) {
+			return ResponseEntity.status(HttpStatus.OK).body("Task started successfully");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
+		}
+	}
 
-	    @PostMapping("/complete/{taskId}")
-	    public ResponseEntity<Void> completeTask(@PathVariable Integer taskId) {
-	        studentService.completeTask(taskId);
-	        return ResponseEntity.noContent().build();
-	    }
+	@PostMapping("/complete/{taskId}")
+	public ResponseEntity<String> completeTask(@PathVariable Integer taskId) {
+		boolean success = studentService.completeTask(taskId);
+		if (success) {
+			return ResponseEntity.status(HttpStatus.OK).body("Task completed successfully");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
+		}
+	}
 
 	@GetMapping("/get")
 	public ResponseEntity<?> getStudent(@RequestBody Student student) {
@@ -88,7 +90,6 @@ public class StudentController {
 		return ResponseEntity.ok().body("Student with ID " + id + " updated successfully.");
 	}
 
-	
 	@PostMapping("/add")
 	public ResponseEntity<?> addStudent(@RequestBody Student student) {
 
