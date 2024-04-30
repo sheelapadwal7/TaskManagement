@@ -46,6 +46,18 @@ public class AdminController {
 		adminService.deleteTask(taskId);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteStudent(@PathVariable Integer StudentId) {
+		adminService.deleteStudent(StudentId);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteProfessor(@PathVariable Integer ProfessorId) {
+		adminService.deleteProfessor(ProfessorId);
+		return ResponseEntity.noContent().build();
+	}
 
 	@GetMapping("")
 	public ResponseEntity<?> getAdmin() {

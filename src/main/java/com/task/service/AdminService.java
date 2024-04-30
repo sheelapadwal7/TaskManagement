@@ -80,6 +80,14 @@ public class AdminService {
     public void deleteTask(Integer id) {
         taskRepository.deleteById(id);
     }
+    
+    public void deleteStudent(Integer id) {
+        taskRepository.deleteById(id);
+    }
+    
+    public void deleteProfessor(Integer id) {
+        taskRepository.deleteById(id);
+    }
 	
 
 	// update admin by id
