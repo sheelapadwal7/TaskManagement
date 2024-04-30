@@ -29,6 +29,33 @@ public class TaskService {
 		return taskRepository.save(task);
 	}
 
+	
+	
+	public boolean startTask(Integer taskId) {
+		Optional<Task> optionalTask = taskRepository.findById(taskId);
+		if (optionalTask.isPresent()) {
+			Task task = optionalTask.get();
+			task.setStatus(Status.INPROGRESS);
+			taskRepository.save(task);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean statusUpdateTask(Integer taskId,Task task) {
+		Optional<Task> optionalTask = taskRepository.findById(taskId);
+		if (optionalTask.isPresent()) {
+			Task task1 = optionalTask.get();
+			task1.setStatus(Status.COMPLETED);
+			task1.setInCompletionReason(task.getInCompletionReason());
+			taskRepository.save(task1);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public List<Task> getTask() {
 		return taskRepository.findAll();
 	}

@@ -18,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.task.model.Student;
-
+import com.task.model.Task;
 import com.task.service.StudentService;
+import com.task.service.TaskService;
 
 @RestController
 @RequestMapping("/student")
@@ -27,12 +28,12 @@ public class StudentController {
 	@Autowired
 	StudentService studentservice;
 
-	@Autowired
-	private StudentService studentService;
+@Autowired
+TaskService taskService;
 
 	@PostMapping("/start/{taskId}")
 	public ResponseEntity<String> startTask(@PathVariable Integer taskId) {
-		boolean success = studentService.startTask(taskId);
+		boolean success = taskService.startTask(taskId);
 		if (success) {
 			return ResponseEntity.status(HttpStatus.OK).body("Task started successfully");
 		} else {
@@ -40,11 +41,11 @@ public class StudentController {
 		}
 	}
 
-	@PostMapping("/complete/{taskId}")
-	public ResponseEntity<String> completeTask(@PathVariable Integer taskId) {
-		boolean success = studentService.completeTask(taskId);
+	@PostMapping("/update/{taskId}")
+	public ResponseEntity<String> statusUpdateTask(@PathVariable Integer taskId,@RequestBody Task task) {
+		boolean success = taskService.statusUpdateTask(taskId,task);
 		if (success) {
-			return ResponseEntity.status(HttpStatus.OK).body("Task completed successfully");
+			return ResponseEntity.status(HttpStatus.OK).body("Task updated successfully");
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
 		}

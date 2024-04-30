@@ -25,10 +25,6 @@ import com.task.model.Task;
 import com.task.service.AdminService;
 import com.task.service.TaskService;
 
-/**
- *
- * @author Suhail Tamboli
- */
 @RestController
 @RequestMapping("admin")
 public class AdminController {
@@ -48,6 +44,18 @@ public class AdminController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteTask(@PathVariable Integer taskId) {
 		adminService.deleteTask(taskId);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteStudent(@PathVariable Integer StudentId) {
+		adminService.deleteStudent(StudentId);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteProfessor(@PathVariable Integer ProfessorId) {
+		adminService.deleteProfessor(ProfessorId);
 		return ResponseEntity.noContent().build();
 	}
 
