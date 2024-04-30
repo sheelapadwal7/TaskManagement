@@ -25,10 +25,6 @@ import com.task.model.Task;
 import com.task.service.AdminService;
 import com.task.service.TaskService;
 
-/**
- *
- * @author Suhail Tamboli
- */
 @RestController
 @RequestMapping("admin")
 public class AdminController {

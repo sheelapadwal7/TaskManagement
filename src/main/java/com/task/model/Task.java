@@ -41,11 +41,23 @@ public class Task {
 	
 	@Column(name = "actual_completion_Date")
 	private Date actualCompletionDate;
+	
+	
+	@Column(name="in_completion_reason")
+	private String inCompletionReason;
 
 	@ManyToMany(mappedBy = "tasks")
     private List<Student> student;
 
 	
+
+	public String getInCompletionReason() {
+		return inCompletionReason;
+	}
+
+	public void setInCompletionReason(String inCompletionReason) {
+		this.inCompletionReason = inCompletionReason;
+	}
 
 	public List<Student> getStudent() {
 		return student;

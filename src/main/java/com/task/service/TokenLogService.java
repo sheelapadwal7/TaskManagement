@@ -23,7 +23,7 @@ public class TokenLogService {
 	public String generateToken() {
 		String token = UUID.randomUUID().toString();
 
-		LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(1);
+		LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(10);
 
 		TokenLog tokenLog = new TokenLog();
 		tokenLog.setToken(token);
@@ -69,84 +69,64 @@ public class TokenLogService {
 		return false;
 	}
 
-	public List<TokenLog> getTokenLog() {
-
-		return (List<TokenLog>) tokenLogRepository.findAll();
-
-	}
-
-	public Optional<TokenLog> getTokenLogById(Integer id) {
-		return tokenLogRepository.findById(id);
-
-	}
-
-	public List<String> validate(TokenLog tokenLog) {
-
-		List<String> error = new ArrayList<>();
-
-		if (tokenLog.getUserName() == null) {
-			error.add("TokenLog Username can not be empty");
-		}
-
-		if (tokenLog.getToken() == null) {
-			error.add("Token can not be empty");
-		}
-		if (tokenLog.getIp() == null) {
-			error.add("IP can not be empty");
-		}
-
-		if (tokenLog.getLinkId() == 0) {
-			error.add("LinkId can not be empty");
-		}
-
-		if (tokenLog.getAttempt() == 0) {
-			error.add("Attempt can not be empty");
-		}
-
-		return error;
-	}
-
-	public TokenLog addLogForStudentLogin(String token, int studentId, String email, LocalDateTime expiryTime) {
-		TokenLog tl = new TokenLog();
-
-		tl.setToken(token);
-		tl.setValid(true);
-
-		tl.setUserName(email);
-		tl.setExpiryTime(expiryTime); // Set expiry time
-		return tokenLogRepository.save(tl);
-	}
-
-	public TokenLog updateTokenLog(Integer id, TokenLog tokenLog) {
-		TokenLog existingStaff = tokenLogRepository.findById(id).orElse(null);
-		existingStaff.setUserName(tokenLog.getUserName());
-		existingStaff.setToken(tokenLog.getToken());
-		existingStaff.setIp(tokenLog.getIp());
-		existingStaff.setLinkId(tokenLog.getLinkId());
-		existingStaff.setAttempt(tokenLog.getAttempt());
-		return tokenLogRepository.save(existingStaff);
-	}
-
-	public boolean deleteTokenLog(Integer id) {
-
-		boolean exists = tokenLogRepository.existsById(id);
-		if (exists) {
-			tokenLogRepository.deleteById(id);
-			return true;
-		} else {
-
-			return false;
-		}
-
-	}
-
-	public boolean verifyToken(String token) {
-		Optional<TokenLog> tokenLogO = tokenLogRepository.findByToken(token);
-		if (!tokenLogO.isPresent()) {
-			return false;
-		}
-
-		return tokenLogO.get().isValid();
-	}
-
+	
+	  public List<TokenLog> getTokenLog() {
+	  
+	  return (List<TokenLog>) tokenLogRepository.findAll();
+	  
+	  }
+	  
+	  public Optional<TokenLog> getTokenLogById(Integer id) { return
+	  tokenLogRepository.findById(id);
+	  
+	  }
+	  
+	  public List<String> validate(TokenLog tokenLog) {
+	  
+	  List<String> error = new ArrayList<>();
+	  
+	  if (tokenLog.getUserName() == null) {
+	  error.add("TokenLog Username can not be empty"); }
+	  
+	  if (tokenLog.getToken() == null) { error.add("Token can not be empty"); } if
+	  (tokenLog.getIp() == null) { error.add("IP can not be empty"); }
+	  
+	  if (tokenLog.getLinkId() == 0) { error.add("LinkId can not be empty"); }
+	  
+	  if (tokenLog.getAttempt() == 0) { error.add("Attempt can not be empty"); }
+	  
+	  return error; }
+	  
+	  public TokenLog addLogForStudentLogin(String token, int studentId, String
+	  email, LocalDateTime expiryTime) { TokenLog tl = new TokenLog();
+	  
+	  tl.setToken(token); tl.setValid(true);
+	  
+	  tl.setUserName(email); tl.setExpiryTime(expiryTime); // Set expiry time
+	  return tokenLogRepository.save(tl); }
+	  
+	  public TokenLog updateTokenLog(Integer id, TokenLog tokenLog) { TokenLog
+	  existingStaff = tokenLogRepository.findById(id).orElse(null);
+	  existingStaff.setUserName(tokenLog.getUserName());
+	  existingStaff.setToken(tokenLog.getToken());
+	  existingStaff.setIp(tokenLog.getIp());
+	  existingStaff.setLinkId(tokenLog.getLinkId());
+	  existingStaff.setAttempt(tokenLog.getAttempt()); return
+	  tokenLogRepository.save(existingStaff); }
+	  
+	  public boolean deleteTokenLog(Integer id) {
+	  
+	  boolean exists = tokenLogRepository.existsById(id); if (exists) {
+	  tokenLogRepository.deleteById(id); return true; } else {
+	  
+	  return false; }
+	  
+	  }
+	  
+	  public boolean verifyToken(String token) { Optional<TokenLog> tokenLogO =
+	  tokenLogRepository.findByToken(token); if (!tokenLogO.isPresent()) { return
+	  false; }
+	  
+	  return tokenLogO.get().isValid(); }
+	 
 }
