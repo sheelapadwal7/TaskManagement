@@ -41,7 +41,7 @@ public class AdminController {
 		return ResponseEntity.ok(createdTask);
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/delete/task/{id}")
 	public ResponseEntity<Void> deleteTask(@PathVariable Integer taskId) {
 		adminService.deleteTask(taskId);
 		return ResponseEntity.noContent().build();
@@ -53,7 +53,7 @@ public class AdminController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Void> deleteProfessor(@PathVariable Integer ProfessorId) {
 		adminService.deleteProfessor(ProfessorId);
 		return ResponseEntity.noContent().build();

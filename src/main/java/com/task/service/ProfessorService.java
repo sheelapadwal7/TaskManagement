@@ -16,16 +16,17 @@ import com.task.model.Professor;
 public class ProfessorService {
 
 	@Autowired
-	private final ProfessorRepository professorRepository;
+	ProfessorRepository professorRepository;
+
 
 	
-	private final BCryptPasswordEncoder passwordEncoder;
-	
-	public ProfessorService(ProfessorRepository professorRepository, BCryptPasswordEncoder passwordEncoder) {
-		
-		this.professorRepository = professorRepository;
-		this.passwordEncoder = passwordEncoder;
-	}
+	/*
+	 * public ProfessorService(ProfessorRepository professorRepository,
+	 * BCryptPasswordEncoder passwordEncoder) {
+	 * 
+	 * this.professorRepository = professorRepository; this.passwordEncoder =
+	 * passwordEncoder; }
+	 */
 
 	
 
@@ -39,7 +40,7 @@ public class ProfessorService {
 
 			Professor professorsdb = professors.get();
 
-			
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 //        	System.out.print("passwrod user: " + loginRequestDto.getPassword() + " from db:" + Professordb.getPassword());
 			if (passwordEncoder.matches(loginRequestDto.getPassword(), professorsdb.getPassword())) {
@@ -63,6 +64,7 @@ public class ProfessorService {
 	
 	public Professor addProfessor(Professor professor) {
 		if (professor.getPassword() != null) {
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			String hashedPassword = passwordEncoder.encode(professor.getPassword());
 			professor.setPassword(hashedPassword);
 		}
@@ -82,6 +84,7 @@ public class ProfessorService {
 			// Check if the password is being updated
 			if (professor.getPassword() != null && !professor.getPassword().isEmpty()) {
 				// Re-encrypt the password
+				BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 				String hashedPassword = passwordEncoder.encode(professor.getPassword());
 				existingProfessor.setPassword(hashedPassword);
 			}

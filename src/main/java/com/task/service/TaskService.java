@@ -90,33 +90,7 @@ public class TaskService {
 		return false;
 	}
 	
-<<<<<<< HEAD
-	public boolean startTask1(Integer taskId) {
-		Optional<Task> optionalTask = taskRepository.findById(taskId);
-		if (optionalTask.isPresent()) {
-			Task task = optionalTask.get();
-			task.setStatus(Status.INPROGRESS);
-			taskRepository.save(task);
-			return true;
-		} else {
-			return false;
-		}
-	}
 
-	public boolean completeTask(Integer taskId) {
-		Optional<Task> optionalTask = taskRepository.findById(taskId);
-		if (optionalTask.isPresent()) {
-			Task task = optionalTask.get();
-			task.setStatus(Status.COMPLETED);
-			taskRepository.save(task);
-			return true;
-		} else {
-			return false;
-		}
-	}
-=======
-	
->>>>>>> b3253b9225dac2ace1968cd6856c8e67686415e9
 	
 	
 	
