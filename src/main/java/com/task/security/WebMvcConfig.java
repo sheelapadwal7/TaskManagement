@@ -9,16 +9,15 @@ import org.springframework.context.annotation.Configuration;
 public class WebMvcConfig {
 
 	
-	@Bean
-	public FilterRegistrationBean<TokenFilter> tokenFilterRegistrationBean(TokenFilter tokenFilter) {
-		FilterRegistrationBean<TokenFilter> registrationBean = new FilterRegistrationBean<>();
-		registrationBean.setFilter(tokenFilter);
-		registrationBean.addUrlPatterns("/student/*", "/admin/*"
-
-		);
-		registrationBean.setOrder(1);
-		return registrationBean;
-	}
+	/*
+	 * @Bean public FilterRegistrationBean<TokenFilter>
+	 * tokenFilterRegistrationBean(TokenFilter tokenFilter) {
+	 * FilterRegistrationBean<TokenFilter> registrationBean = new
+	 * FilterRegistrationBean<>(); registrationBean.setFilter(tokenFilter);
+	 * registrationBean.addUrlPatterns("/student/*", "/admin/*"
+	 * 
+	 * ); registrationBean.setOrder(1); return registrationBean; }
+	 */
 
     @Bean
     public FilterRegistrationBean<TokenFilter> authFilterRegistrationBean(TokenFilter tokenFilter) {

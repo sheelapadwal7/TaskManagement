@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.task.model.Task;
+import com.task.service.AuthService;
 import com.task.service.TaskService;
 
 @RestController
@@ -23,6 +25,9 @@ public class TaskController {
 
 	@Autowired
 	TaskService taskService;
+	
+	@Autowired
+    private AuthService authService;
 
 	@GetMapping
 	public ResponseEntity<List<Task>> getAllTasks() {
@@ -39,13 +44,17 @@ public class TaskController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-
-	@PostMapping("/add")
-	public ResponseEntity<?> createTask(@RequestBody Task task) {
-		taskService.createTask(task);
-		return ResponseEntity.ok().body("Task added successfully.");
-	}
-
+	@PostMapping("/addtask")
+    public ResponseEntity<Task> createTask(@RequestBody Task task,
+                                            @RequestHeader("username") String username,
+                                            @RequestHeader("password") String password) {
+        if (authService.isAdmin(username, password)) {
+            Task createdTask = taskService.createTask(task);
+            return ResponseEntity.ok(createdTask);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteStudent(@PathVariable Integer id) {
 

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.task.DTO.StudentTaskDTO;
 import com.task.Repository.AdminRepository;
 import com.task.Repository.StudentRepository;
 import com.task.Repository.TaskRepository;
@@ -56,6 +57,10 @@ public class TaskService {
 		}
 	}
 
+	
+	public List<StudentTaskDTO> findTaskWithStudentTasks(Integer taskId) {
+        return taskRepository.findTaskWithStudentTasks(taskId);
+    }
 	public List<Task> getTask() {
 		return taskRepository.findAll();
 	}

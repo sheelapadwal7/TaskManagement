@@ -40,10 +40,9 @@ public class Student {
 	@Column(name = "gender")
 	private Gender gender;
 
-	@Column(name = "date")
+	@Column(name = "dob")
 	private Date dob;
-
-
+	
 	@Column(name = "password")
 	private String password;
 	

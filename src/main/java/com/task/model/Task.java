@@ -43,7 +43,7 @@ public class Task {
 	private Date actualCompletionDate;
 	
 	
-	@Column(name="in_completion_reason")
+	@Column(name="incompletion_reason")
 	private String inCompletionReason;
 
 	@ManyToMany(mappedBy = "tasks")
