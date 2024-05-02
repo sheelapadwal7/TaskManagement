@@ -5,6 +5,7 @@ package com.task.model;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.task.enums.LinkType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,6 +31,11 @@ public class TokenLog {
 	
 	@Column(name="link_id")
 	private int linkId;
+	
+
+	@Enumerated(EnumType.STRING)
+	@Column(name="link_type")
+	private LinkType linkType;
 	
 	
 	@Column(name="user_name", length = 128)
@@ -93,6 +99,14 @@ public class TokenLog {
 	}
 
 	
+
+	public LinkType getLinkType() {
+		return linkType;
+	}
+
+	public void setLinkType(LinkType linkType) {
+		this.linkType = linkType;
+	}
 
 	public String getUserName() {
 		return userName;

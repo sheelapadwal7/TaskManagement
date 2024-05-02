@@ -1,5 +1,6 @@
 package com.task.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,8 +60,26 @@ public class TaskService {
 
 	
 	public List<StudentTaskDTO> findTaskWithStudentTasks(Integer taskId) {
-        return taskRepository.findTaskWithStudentTasks(taskId);
+        return taskRepository.findTaskWithStudentTasksJQL(taskId);
     }
+
+	public List<StudentTaskDTO> findTaskWithStudentTasks2(Integer taskId) {
+        List<Object[]> stObject = taskRepository.findTaskWithStudentTasks(taskId);
+        List<StudentTaskDTO> stDtos = new ArrayList<>();
+        
+        for(Object[] st: stObject){
+        	StudentTaskDTO stDto = new StudentTaskDTO();
+        	stDto.setTaskId((Integer) st[0]);
+        	stDto.setTaskName((String) st[1]);
+        	stDto.setTaskDescription((String) st[1]);
+        	stDto.setStudentTaskId((Integer) st[3]);
+        	
+        	stDtos.add(stDto);
+        }
+        
+        return stDtos;
+    }
+	
 	public List<Task> getTask() {
 		return taskRepository.findAll();
 	}

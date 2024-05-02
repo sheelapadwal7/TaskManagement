@@ -4,11 +4,18 @@ package com.task.DTO;
 
 public class StudentTaskDTO {
     
+	
+	
     private Integer taskId;
     private String taskName;
     private String taskDescription;
     private Integer studentTaskId;
 
+
+    public StudentTaskDTO() {
+        
+    }
+    
     public StudentTaskDTO(Integer taskId, String taskName, String taskDescription, Integer studentTaskId) {
         this.taskId = taskId;
         this.taskName = taskName;

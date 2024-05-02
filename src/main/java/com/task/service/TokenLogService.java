@@ -2,6 +2,7 @@ package com.task.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.task.Repository.TokenLogRepository;
-
+import com.task.enums.LinkType;
 import com.task.model.TokenLog;
 
 @Service
@@ -49,6 +50,23 @@ public class TokenLogService {
 		}
 		return false;
 	}
+	
+	// Valid token
+	public TokenLog verifyToken2(String token) {
+		Optional<TokenLog> tokenLogOptional = tokenLogRepository.findByToken(token);
+
+		if (tokenLogOptional.isPresent()) {
+			TokenLog tokenLog = tokenLogOptional.get();
+			if (tokenLog.isValid()) {
+				LocalDateTime expiryTime = tokenLog.getExpiryTime();
+
+				if(!isTokenExpired(expiryTime)) {
+					return tokenLog;
+				}
+			}
+		}
+		return null;
+	}
 
 	private boolean isTokenExpired(LocalDateTime expiryTime) {
 		return expiryTime != null && expiryTime.isBefore(LocalDateTime.now());
@@ -74,6 +92,34 @@ public class TokenLogService {
 	  
 	  return (List<TokenLog>) tokenLogRepository.findAll();
 	  
+	  }
+	  
+
+	  public TokenLog getTokenLog(String token) {
+
+	      token = token.replace("Bearer ", "");
+		  TokenLog tl = tokenLogRepository.findByToken(token).orElse(null);
+	  
+		  if(tl == null) {
+			  throw new Error("No login found");
+		  }
+		  
+		  return tl;
+	  }
+	  
+	  
+	  public boolean isStudent(TokenLog tokenLog) {
+		  return tokenLog.getLinkType().equals(LinkType.STUDENT);
+	  }
+	  
+
+	  public boolean isAdmin(TokenLog tokenLog) {
+		  return tokenLog.getLinkType().equals(LinkType.ADMIN);
+	  }
+	  
+
+	  public boolean isAdminOrProffesor(TokenLog tokenLog) {
+		  return (tokenLog.getLinkType().equals(LinkType.ADMIN) || tokenLog.getLinkType().equals(LinkType.PROFESSOR));
 	  }
 	  
 	  public Optional<TokenLog> getTokenLogById(Integer id) { return

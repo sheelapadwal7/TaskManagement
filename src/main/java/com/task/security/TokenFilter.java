@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.task.model.TokenLog;
 import com.task.service.TokenLogService;
 
 import jakarta.servlet.Filter;
@@ -40,11 +41,20 @@ public class TokenFilter implements Filter {
             return;
         }
 
-        if (!tokenLogService.isValidToken(token)) {
-            sendUnauthorizedResponse(response, "Invalid or expired token");
-            return;
-        }
+        token = token.replace("Bearer ", "");
+//        if (!tokenLogService.isValidToken(token)) {
+//            sendUnauthorizedResponse(response, "Invalid or expired token");
+//            return;
+//        }
+        
+         TokenLog tl = tokenLogService.verifyToken2(token);
+         if (tl == null) {
+           sendUnauthorizedResponse(response, "Invalid or expired token");
+           return;
+         }
 
+         request.setAttribute("tokenLog", tl);
+         
         // Token is valid, continue with the filter chain
         filterChain.doFilter(request, response);
     }

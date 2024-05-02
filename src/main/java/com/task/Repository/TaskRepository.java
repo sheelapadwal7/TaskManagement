@@ -14,8 +14,13 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 
 	@Query(value = "SELECT t.task_id AS taskId, t.task_name AS taskName, t.task_desc AS taskDescription, st.id AS studentTaskId "
-			+ "FROM Task t LEFT JOIN StudentTask st ON st.task_id = t.task_id "
+			+ "FROM task t LEFT JOIN studenttask st ON st.task_id = t.task_id "
 			+ "WHERE t.task_id = :taskId", nativeQuery = true)
-	List<StudentTaskDTO> findTaskWithStudentTasks(@Param("taskId") Integer taskId);
+	List<Object[]> findTaskWithStudentTasks(@Param("taskId") Integer taskId);
+	
+	
+	@Query("SELECT NEW com.task.DTO.StudentTaskDTO(t.id, t.name, t.description, st.id) FROM Task t left join StudentTask st on t.id = st.task.id WHERE t.id = :taskId")
+	List<StudentTaskDTO> findTaskWithStudentTasksJQL(@Param("taskId") Integer taskId);
+	
 
 }
