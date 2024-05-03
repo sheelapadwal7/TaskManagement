@@ -113,8 +113,36 @@ public class TaskService {
 		}
 		return false;
 	}
+<<<<<<< Updated upstream
 	
 
+=======
+
+//	public boolean startTask1(Integer taskId) {
+//		Optional<Task> optionalTask = taskRepository.findById(taskId);
+//		if (optionalTask.isPresent()) {
+//			Task task = optionalTask.get();
+//			task.setStatus(Status.INPROGRESS);
+//			taskRepository.save(task);
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
+
+	public boolean completeTask(Integer taskId) {
+		Optional<Task> optionalTask = taskRepository.findById(taskId);
+		if (optionalTask.isPresent()) {
+			Task task = optionalTask.get();
+			task.setStatus(Status.COMPLETED);
+			taskRepository.save(task);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+>>>>>>> Stashed changes
 	
 	
 	
