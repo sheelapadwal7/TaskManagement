@@ -1,45 +1,32 @@
 package com.task.security;
 
-
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.task.model.TokenLog;
-import com.task.service.TokenLogService;
-
-import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
-public class TokenFilter implements Filter {
-
-    @Autowired
-    private TokenLogService tokenLogService;
-    
+@Component
+public class SecurityFilter extends OncePerRequestFilter {
+	
 
     @Autowired
     private JwtService jwtService;
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 
-    }
-
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
-            throws IOException, ServletException {
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-
-        System.out.println("i am in token filter");
+        System.out.println("i am in security filter");
         String token = request.getHeader("Authorization");
         if (token == null || token.isEmpty()) {
             sendUnauthorizedResponse(response, "Missing token");
@@ -58,20 +45,28 @@ public class TokenFilter implements Filter {
            return;
          }
 
-		request.setAttribute("tokenLog", (Object) userName);
+         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                 userName,
+                 null,
+                 null
+         );
+
+         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+         SecurityContextHolder.getContext().setAuthentication(authToken);
+         
+         //in controller by this
+//         SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
          
         // Token is valid, continue with the filter chain
         filterChain.doFilter(request, response);
-    }
-
-    private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+		
+		
+	}
+	
+	private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write(message);
     }
 
-    @Override
-    public void destroy() {
-
-    }
 }
-

@@ -16,6 +16,7 @@ import com.task.DTO.LoginResponseDTO;
 import com.task.DTO.UserDTO;
 import com.task.model.Admin;
 import com.task.model.Student;
+import com.task.security.JwtService;
 import com.task.service.AdminService;
 import com.task.service.StudentService;
 import com.task.service.TokenLogService;
@@ -30,6 +31,10 @@ public class AuthController {
 
 	@Autowired
 	TokenLogService tokenlogservice;
+	
+
+	@Autowired
+	JwtService jwtService;
 
 	@Autowired
 	AdminService adminService;
@@ -60,7 +65,7 @@ public class AuthController {
 		}
 
 		// generate token
-		String token = tokenlogservice.generateToken();
+		String token = jwtService.generateToken(student);
 
 		// Response preparation
 		UserDTO userDto = new UserDTO();
