@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.task.DTO.StudentTaskDTO;
@@ -25,11 +27,37 @@ public class TaskService {
 
 	@Autowired
 	AdminRepository adminRepository;
+	
+	
+	public List<Task> getAllTaskwithPagination(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return taskRepository.findAllTasksWithPagination(offset, pageSize);
+    }
+	
+	public List<Task> getAllTasksWithPaginationAndSortingByDate(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return taskRepository.findAllTasksWithPaginationAndSorting(offset, pageSize);
+           
+    }
+	
+	public List<Task> getAllTasksWithPaginationAndSortingByDesc(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return taskRepository.findAllTasksWithPaginationAndSortingByDesc(offset, pageSize);
+    }
+	
+	
+	public Page<Task> getAllTasksWithPagination(Pageable pageable) {
+        return taskRepository.findAllTasksWithPagination(pageable);
+    }
+	
+	
 
 	public Task createTask(Task task) {
 
 		return taskRepository.save(task);
 	}
+	
+	
 
 	
 	
