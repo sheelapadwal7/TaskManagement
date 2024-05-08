@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.task.enums.SortCriteria;
+import com.task.enums.SortDirection;
 import com.task.model.Task;
 import com.task.service.TaskService;
 
@@ -29,26 +31,47 @@ public class TaskController {
 	@Autowired
 	TaskService taskService;
 
-	@GetMapping
-	public List<Task> getTasksWithPagination(
-			@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int pageSize) {
-		return taskService.getAllTaskwithPagination(page, pageSize);
-	}
-
-	@GetMapping("/tasksort")
-	public List<Task> getTasksWithPaginationAndSortingByDate(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int pageSize) {
-		return taskService.getAllTasksWithPaginationAndSortingByDate(page, pageSize);
-	}
-
-	@GetMapping("/tasksortdesc")
-	public List<Task> getTasksWithPaginationAndSortingByDesc(@RequestParam(defaultValue = "1") int page,
-			@RequestParam(defaultValue = "10") int pageSize) {
-		return taskService.getAllTasksWithPaginationAndSortingByDesc(page, pageSize);
-	}
-
+	/*
+	 * @GetMapping public List<Task> getTasksWithPagination(
+	 * 
+	 * @RequestParam(defaultValue = "1") int page,
+	 * 
+	 * @RequestParam(defaultValue = "10") int pageSize) { return
+	 * taskService.getAllTaskwithPagination(page, pageSize); }
+	 * 
+	 * @GetMapping("/tasksort") public List<Task>
+	 * getTasksWithPaginationAndSortingByDate(@RequestParam(defaultValue = "1") int
+	 * page,
+	 * 
+	 * @RequestParam(defaultValue = "10") int pageSize) { return
+	 * taskService.getAllTasksWithPaginationAndSortingByDate(page, pageSize); }
+	 * 
+	 * @GetMapping("/tasksortdesc") public List<Task>
+	 * getTasksWithPaginationAndSortingByDesc(@RequestParam(defaultValue = "1") int
+	 * page,
+	 * 
+	 * @RequestParam(defaultValue = "10") int pageSize) { return
+	 * taskService.getAllTasksWithPaginationAndSortingByDesc(page, pageSize); }
+	 */
 	
+	
+	@GetMapping
+    public List<Task> getAllTasksWithPaginationAndSorting(
+            @RequestParam(defaultValue = "2") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) SortCriteria sortCriteria,
+            @RequestParam(required = false) SortDirection sortDirection) {
+
+        return taskService.getAllTasksWithPaginationAndSorting(page, pageSize, sortCriteria, sortDirection);
+    }
+	
+	@GetMapping("sbway")
+    public Page<Task> getAllTasks(
+            Pageable pageable, @RequestParam(required = false) String search, @RequestParam(required = false) String description) {
+        return taskService.getAllTasks(pageable, search, description);
+    }
+
+
 	 @GetMapping("/tasks")
 	    public Page<Task> getTasksWithPagination1(
 	            @RequestParam(defaultValue = "0") int page,
