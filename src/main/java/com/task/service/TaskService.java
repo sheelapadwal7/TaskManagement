@@ -113,10 +113,7 @@ public class TaskService {
 		}
 		return false;
 	}
-<<<<<<< Updated upstream
-	
 
-=======
 
 //	public boolean startTask1(Integer taskId) {
 //		Optional<Task> optionalTask = taskRepository.findById(taskId);
@@ -142,7 +139,6 @@ public class TaskService {
 		}
 	}
 
->>>>>>> Stashed changes
 	
 	
 	
