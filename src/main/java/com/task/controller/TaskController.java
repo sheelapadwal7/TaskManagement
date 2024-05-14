@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.task.enums.SortCriteria;
 import com.task.enums.SortDirection;
+import com.task.enums.Status;
 import com.task.model.Task;
 import com.task.service.TaskService;
 
@@ -67,8 +68,8 @@ public class TaskController {
 	
 	@GetMapping("sbway")
     public Page<Task> getAllTasks(
-            Pageable pageable, @RequestParam(required = false) String search, @RequestParam(required = false) String description) {
-        return taskService.getAllTasks(pageable, search, description);
+            Pageable pageable, @RequestParam(required = false) String search, @RequestParam(required = false) String description,@RequestParam(required = false) Status status) {
+        return taskService.getAllTasks(pageable, search, description,status);
     }
 
 

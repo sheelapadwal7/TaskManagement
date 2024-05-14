@@ -67,7 +67,7 @@ public class TaskService {
 	}
 	
 
-	public Page<Task> getAllTasks(Pageable pageable, String search, String description) {
+	public Page<Task> getAllTasks(Pageable pageable, String search, String description,Status status) {
 		
 		Specification<Task> specs = null;
 		
@@ -76,6 +76,11 @@ public class TaskService {
 	                                                             	
 		if(description != null) {
 			specs = specs.and(TaskSpecs.description(description));
+		}
+		
+		if(status!=null)
+		{
+			specs=specs.and(TaskSpecs.status(status));
 		}
 		
 		

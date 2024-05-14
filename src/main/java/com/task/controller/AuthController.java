@@ -21,6 +21,8 @@ import com.task.service.AdminService;
 import com.task.service.StudentService;
 import com.task.service.TokenLogService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 
 @RequestMapping("/auth")
@@ -31,10 +33,9 @@ public class AuthController {
 
 	@Autowired
 	TokenLogService tokenlogservice;
-	
 
-	//@Autowired
-	//JwtService jwtService;
+	// @Autowired
+	// JwtService jwtService;
 
 	@Autowired
 	AdminService adminService;
@@ -49,23 +50,67 @@ public class AuthController {
 
 	}
 
+	/*
+	 * @PostMapping("/student/login") public LoginResponseDTO
+	 * studentLogin(@RequestBody LoginRequestDTO loginRequestDto) {
+	 * 
+	 * LoginResponseDTO loginResponseDto = new LoginResponseDTO();
+	 * 
+	 * // Logic flow start Student student = studentservice.login(loginRequestDto);
+	 * 
+	 * // if not found send error if (student == null) {
+	 * loginResponseDto.setStatus(false);
+	 * loginResponseDto.setMessage("User credentials are not correct"); return
+	 * loginResponseDto; }
+	 * 
+	 * // generate token //String token = jwtService.generateToken(student); String
+	 * token = tokenlogservice.generateToken();
+	 * 
+	 * // Response preparation UserDTO userDto = new UserDTO();
+	 * userDto.setFirstName(student.getFirstName());
+	 * userDto.setUserName(student.getUserName());
+	 * 
+	 * loginResponseDto.setStatus(true);
+	 * loginResponseDto.setMessage(" Student Login Successfully");
+	 * loginResponseDto.setUser(userDto); loginResponseDto.setToken(token);
+	 * //Response preparation end
+	 * 
+	 * // Response send return loginResponseDto;
+	 * 
+	 * }
+	 * 
+	 */
 	@PostMapping("/student/login")
 	public LoginResponseDTO studentLogin(@RequestBody LoginRequestDTO loginRequestDto) {
 
 		LoginResponseDTO loginResponseDto = new LoginResponseDTO();
 
-		// Logic flow start
-		Student student = studentservice.login(loginRequestDto);
-
-		// if not found send error
-		if (student == null) {
+		if (loginRequestDto.getUserName() == null || loginRequestDto.getUserName().isEmpty()
+				|| loginRequestDto.getPassword() == null || loginRequestDto.getPassword().isEmpty()) {
 			loginResponseDto.setStatus(false);
-			loginResponseDto.setMessage("User credentials are not correct");
+			loginResponseDto.setMessage("Username or password cannot be empty");
 			return loginResponseDto;
 		}
 
-		// generate token
-		//String token = jwtService.generateToken(student);
+		Student student = studentservice.findStudentByUsername(loginRequestDto.getUserName());
+
+		if (!studentservice.isStudentValid(student)) {
+
+			return studentservice.createInvalidStudentResponse(loginResponseDto, student);
+		}
+
+		// Check if password matches
+		boolean passwordMatches = studentservice.verifyPassword(loginRequestDto.getPassword(), student.getPassword());
+		if (!passwordMatches) {
+			// Increment login attempts
+			studentservice.handleIncorrectPassword(loginResponseDto, student);
+			return loginResponseDto;
+		}
+
+		// Reset login attempts upon successful login
+		studentservice.resetLoginAttempts(student);
+
+		// Generate token or session
 		String token = tokenlogservice.generateToken();
 
 		// Response preparation
@@ -74,15 +119,59 @@ public class AuthController {
 		userDto.setUserName(student.getUserName());
 
 		loginResponseDto.setStatus(true);
-		loginResponseDto.setMessage(" Student Login Successfully");
+		loginResponseDto.setMessage("Student Login Successfully");
 		loginResponseDto.setUser(userDto);
 		loginResponseDto.setToken(token);
-		// Response preparation end
 
 		// Response send
 		return loginResponseDto;
-
 	}
+	
+	
+	@PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+        studentservice.generateTokenAndSendEmail(email);
+        return ResponseEntity.ok("Password reset link sent to your email");
+    }
+	
+	
+	/*
+	 * @PostMapping("/change-password") public String changePassword(@RequestParam
+	 * String email,
+	 * 
+	 * @RequestParam String newPassword,
+	 * 
+	 * @RequestParam String confirmPassword) {
+	 * 
+	 * if (!newPassword.equals(confirmPassword)) { return
+	 * "Error: New password and confirmed password do not match"; }
+	 * 
+	 * studentservice.changePassword(email,newPassword, confirmPassword); return
+	 * "Password changed successfully"; }
+	 */
+	
+	@PostMapping("/change-password")
+	public String changePassword(HttpSession session,
+	                              @RequestParam String newPassword,
+	                              @RequestParam String confirmPassword) {
+	    String email = (String) session.getAttribute("email"); 
+	    
+	    
+	    if (!newPassword.equals(confirmPassword)) {
+	        return "Error: New password and confirmed password do not match";
+	    }
+
+	    studentservice.changePassword(email, newPassword, confirmPassword);
+	    return "Password changed successfully";
+	}
+
+
+
+	
+	
+	
+	
+	
 
 	@PostMapping("/admin/login")
 	public LoginResponseDTO adminlogin(@RequestBody LoginRequestDTO loginRequestDto) {
