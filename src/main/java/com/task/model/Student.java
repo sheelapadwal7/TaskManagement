@@ -1,5 +1,6 @@
 package com.task.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +47,45 @@ public class Student {
 	@Column(name = "password")
 	private String password;
 	
+	private String accountStatus; // "ACTIVE", "LOCKED"
+    private Integer loginAttempts;
+    private LocalDateTime lockedDateTime;
+    
+    
+    
+    
+	
+	
+	public String getAccountStatus() {
+		return accountStatus;
+	}
+
+
+	public void setAccountStatus(String accountStatus) {
+		this.accountStatus = accountStatus;
+	}
+
+
+	public Integer getLoginAttempts() {
+		return loginAttempts;
+	}
+
+
+	public void setLoginAttempts(Integer loginAttempts) {
+		this.loginAttempts = loginAttempts;
+	}
+
+
+	public LocalDateTime getLockedDateTime() {
+		return lockedDateTime;
+	}
+
+
+	public void setLockedDateTime(LocalDateTime lockedDateTime) {
+		this.lockedDateTime = lockedDateTime;
+	}
+
+
 	@ManyToMany
     private List<Task> tasks;
 
