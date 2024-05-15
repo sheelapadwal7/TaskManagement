@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Create Task</title>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<style>
+		/* Custom CSS */
+		body {
+			padding: 20px;
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>Create Task</h1>
+		<form id="createTaskForm" action="/localhost:8080/task/addtask" method="post">
+			<div class="form-group">
+				<label for="name">Name:</label>
+				<input type="text" class="form-control" id="name" name="name" required>
+			</div>
+
+			<div class="form-group">
+				<label for="description">Description:</label>
+				<textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+			</div>
+
+
+
+			<button type="submit" class="btn btn-primary">Create Task</button>
+		</form>
+	</div>
+
+	<!-- jQuery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<!-- Ajax Script -->
+	<script>
+		$(document).ready(function () {
+			$('#createTaskForm').submit(function (event) {
+				event.preventDefault(); 
+
+				// Get form data
+				var formData = {
+					'name': $('#name').val(),
+					'description': $('#description').val()
+				};
+
+				// Get dynamic username and password
+				var username = $('#username').val();
+				var password = $('#password').val();
+
+				// Send the data using Ajax
+				$.ajax({
+					type: 'POST',
+					url: 'http://localhost:8080/task/addtask',
+					headers: {
+						'username': username,
+						'password': password,
+						'Content-Type': 'application/json'
+					},
+					data: JSON.stringify(formData),
+					dataType: 'json',
+					encode: true
+				})
+					.done(function (data) {
+						// Handle successful response
+						console.log(data);
+						alert("Task added successfully");
+						// Optionally, redirect the user to another page
+						// window.location.href = '/success';
+					})
+					.fail(function (xhr, status, error) {
+						// Handle error
+						console.error(xhr.responseText);
+						alert("Error occurred: " + xhr.responseText);
+					});
+			});
+		});
+	</script>
+</body>
+
+</html>

@@ -36,156 +36,127 @@ public class Student {
 
 	@Column(name = "contact_number")
 	private String contactNumber;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "gender")
 	private Gender gender;
 
 	@Column(name = "dob")
 	private Date dob;
-	
+
 	@Column(name = "password")
 	private String password;
-	
+
 	private String accountStatus; // "ACTIVE", "LOCKED"
-    private Integer loginAttempts;
-    private LocalDateTime lockedDateTime;
-    
-    
-    
-    
-	
-	
+	private Integer loginAttempts;
+	private LocalDateTime lockedDateTime;
+
 	public String getAccountStatus() {
 		return accountStatus;
 	}
-
 
 	public void setAccountStatus(String accountStatus) {
 		this.accountStatus = accountStatus;
 	}
 
-
 	public Integer getLoginAttempts() {
 		return loginAttempts;
 	}
-
 
 	public void setLoginAttempts(Integer loginAttempts) {
 		this.loginAttempts = loginAttempts;
 	}
 
-
 	public LocalDateTime getLockedDateTime() {
 		return lockedDateTime;
 	}
-
 
 	public void setLockedDateTime(LocalDateTime lockedDateTime) {
 		this.lockedDateTime = lockedDateTime;
 	}
 
-
 	@ManyToMany
-    private List<Task> tasks;
+	private List<Task> tasks;
 
-
+	public void setLoginAttempts(int loginAttempts) {
+		this.loginAttempts = loginAttempts;
+	}
 
 	public List<Task> getTasks() {
 		return tasks;
 	}
 
-
 	public void setTasks(List<Task> tasks) {
 		this.tasks = tasks;
 	}
-
 
 	public Integer getId() {
 		return id;
 	}
 
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
 
 	public String getUserName() {
 		return userName;
 	}
 
-
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
 
 	public String getFirstName() {
 		return firstName;
 	}
 
-
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-
 
 	public String getEmail() {
 		return email;
 	}
 
-
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
 
 	public String getContactNumber() {
 		return contactNumber;
 	}
 
-
 	public void setContactNumber(String contactNumber) {
 		this.contactNumber = contactNumber;
 	}
-
 
 	public Gender getGender() {
 		return gender;
 	}
 
-
 	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
-
 
 	public Date getDob() {
 		return dob;
 	}
 
-
 	public void setDob(Date dob) {
 		this.dob = dob;
 	}
-
 
 	public String getPassword() {
 		return password;
 	}
 
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-
 	public void setProfessor(Object object) {
 		// TODO Auto-generated method stub
-		
-	}
 
-		
+	}
 
 }
