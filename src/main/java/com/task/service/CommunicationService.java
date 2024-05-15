@@ -27,5 +27,12 @@ public class CommunicationService {
 		communicationUtil.sendEmail(toEmail, subject, body);
 	}
 	
+	public void sendOTP(String mobile, Integer otp) {
+		
+		String text = "<#> Your one time password(OTP) for UTS mobile ticket is ${otp} CRIS/UTS/vddfsdfsere";
+		text = text.replace("${otp}", "" + otp);
+
+		communicationUtil.sendSMS(mobile, text);
+	}
 	
 }
