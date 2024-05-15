@@ -1,3 +1,7 @@
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 package com.task.util;
 
 import java.util.HashMap;
@@ -17,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.mail.internet.MimeMessage;
 
+<<<<<<< Updated upstream
 
 @Component
 public class CommunicationUtil {
@@ -35,6 +40,22 @@ public class CommunicationUtil {
 	@Value("{sms.key}")
 	String apiKey;
 	
+=======
+@Component
+public class CommunicationUtil {
+
+	@Autowired
+	JavaMailSender mailSender;
+
+	@Autowired
+	RestTemplate restTemplate;
+	
+	 @Value("${sms.url}") 
+	    String url;
+
+	    @Value("${sms.key}")
+	    String apiKey;
+>>>>>>> Stashed changes
 
 
 	public boolean sendEmail(String toEmail, String subject, String body) {
@@ -43,6 +64,7 @@ public class CommunicationUtil {
 
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+<<<<<<< Updated upstream
 			
 			
 			helper.setText(body, true); // Use this or above line.
@@ -59,12 +81,33 @@ public class CommunicationUtil {
 			System.out.println("Failed to Send email for " + subject + " to " + toEmail);
 			System.out.println("Exception: " + ex.getStackTrace());
 			
+=======
+
+			helper.setText(body, true); // Use this or above line. helper.setTo(toEmail);
+			helper.setSubject("TMS - " + subject);
+			mailSender.send(mimeMessage);
+
+			System.out.println("Sent email for " + subject + " to " + toEmail);
+			return true;
+
+		}
+		 
+		catch (Exception ex) {
+
+			System.out.println("Failed to Send email for " + subject + " to " + toEmail);
+			System.out.println("Exception: " + ex.getStackTrace());
+
+>>>>>>> Stashed changes
 			return false;
 		}
 	}
 	
+<<<<<<< Updated upstream
 	
 	public void sendSMS(String mobile, String content) {
+=======
+public void sendSMS(String mobile, String content) {
+>>>>>>> Stashed changes
 		
 		try {
 			
@@ -86,4 +129,9 @@ public class CommunicationUtil {
 		}
 	}
 	
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 }

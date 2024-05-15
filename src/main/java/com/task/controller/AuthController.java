@@ -193,14 +193,13 @@ public class AuthController {
 		loginResponseDto.setStatus(true);
 		loginResponseDto.setMessage(" Admin Login Successfully");
 		loginResponseDto.setUser(userDto);
-		//loginResponseDto.setToken(token);
-		// Response preparation end
+		
 
 		// Response send
 		return loginResponseDto;
 
 	}
-
+ 
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(@RequestParam String token) {
 		if (tokenlogservice.invalidateToken(token)) {

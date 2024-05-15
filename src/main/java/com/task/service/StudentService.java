@@ -42,11 +42,17 @@ public class StudentService {
 	@Autowired
 	TokenLogService tokenlogservice;
 	
+<<<<<<< Updated upstream
 	@Autowired
 	TokenLogRepository tokenLogRepository;
 	
 	@Autowired
 	CommunicationService communicationService;
+=======
+	
+	@Autowired
+	TokenLogRepository tokenLogRepository;
+>>>>>>> Stashed changes
 
 	public Student login(LoginRequestDTO loginRequestDto) {
 		Optional<Student> studentO = studentrepository.findByUserName(loginRequestDto.getUserName());
@@ -154,6 +160,51 @@ public class StudentService {
 		javaMailSender.send(message);
 	}
 
+<<<<<<< Updated upstream
+=======
+
+
+	public void resetPassword(String token, String newPassword, String confirmPassword) {
+        if (newPassword == null || newPassword.isEmpty() || confirmPassword == null || confirmPassword.isEmpty()) {
+            throw new IllegalArgumentException("Password fields cannot be empty");
+        }
+
+        Optional<TokenLog> tokenLogOptional = tokenLogRepository.findByTokenAndLinkType(token, LinkType.STUDENT);
+        if (!tokenLogOptional.isPresent()) {
+            throw new IllegalArgumentException("Invalid token");
+        }
+
+        TokenLog tokenLog = tokenLogOptional.get();
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+
+        if (tokenLog.getLinkType() != LinkType.STUDENT) {
+            throw new IllegalArgumentException("Invalid link type for password reset");
+        }
+
+        
+        int studentId = tokenLog.getLinkId();
+
+        
+        Optional<Student> studentOptional = studentrepository.findById(studentId);
+        if (!studentOptional.isPresent()) {
+            throw new IllegalArgumentException("No student found with the provided token and link type");
+        }
+
+        // Update the password for the Student entity
+        Student student = studentOptional.get();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        student.setPassword(encodedPassword);
+        studentrepository.save(student);
+
+        // Delete the TokenLog after password reset
+        tokenLogRepository.delete(tokenLog);
+    }
+	 
+>>>>>>> Stashed changes
 	
 
 	public void resetPassword(String token, String newPassword, String confirmPassword) {
