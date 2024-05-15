@@ -119,7 +119,6 @@ public class AuthController {
 		// Reset login attempts upon successful login
 		studentService.resetLoginAttempts(student);
 
-
 	        // Check if account is locked
 	        if (student.getAccountStatus().equals("locked")) {
 	            LocalDateTime currentTime = LocalDateTime.now();
@@ -142,7 +141,7 @@ public class AuthController {
 	            student.setLockedDateTime(LocalDateTime.now());
 
 	            // Generate token
-	            String token = tokenlogservice.generateToken();
+	            String token = tokenlogservice.generateToken(student);
 
 	            // Response preparation
 	            UserDTO userDto = new UserDTO();
@@ -184,26 +183,21 @@ public class AuthController {
 	 * "Password changed successfully"; }
 	 */
 	
-	@PostMapping("/change-password")
-	public String changePassword(HttpSession session,
-	                              @RequestParam String newPassword,
-	                              @RequestParam String confirmPassword) {
-	    String email = (String) session.getAttribute("email"); 
-	    
-	    
-	    if (!newPassword.equals(confirmPassword)) {
-	        return "Error: New password and confirmed password do not match";
-	    }
 
-	    studentService.changePassword(email, newPassword, confirmPassword);
-	    return "Password changed successfully";
-	}
+	@PostMapping("/reset")
+    public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
+                                                 @RequestParam("newPassword") String newPassword,
+                                                 @RequestParam("confirmPassword") String confirmPassword) {
+        try {
+            studentService.resetPassword(token, newPassword, confirmPassword);
+            return ResponseEntity.ok("Password reset successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 
 
-	
-	
-	
 	
 	
 
@@ -223,7 +217,7 @@ public class AuthController {
 		}
 
 		// generate token
-		String token = tokenlogservice.generateToken();
+		//String token = tokenlogservice.generateToken();
 
 		// Response preparation
 		UserDTO userDto = new UserDTO();
@@ -234,14 +228,13 @@ public class AuthController {
 		loginResponseDto.setStatus(true);
 		loginResponseDto.setMessage(" Admin Login Successfully");
 		loginResponseDto.setUser(userDto);
-		loginResponseDto.setToken(token);
-		// Response preparation end
+		
 
 		// Response send
 		return loginResponseDto;
 
 	}
-
+ 
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(@RequestParam String token) {
 		if (tokenlogservice.invalidateToken(token)) {

@@ -18,8 +18,10 @@ import com.task.DTO.LoginResponseDTO;
 import com.task.Repository.StudentRepository;
 import com.task.Repository.StudentTaskRepository;
 import com.task.Repository.TaskRepository;
-
+import com.task.Repository.TokenLogRepository;
+import com.task.enums.LinkType;
 import com.task.model.Student;
+import com.task.model.TokenLog;
 
 import jakarta.transaction.Transactional;
 
@@ -39,6 +41,13 @@ public class StudentService {
 
 	@Autowired
 	TokenLogService tokenlogservice;
+	
+	@Autowired
+	TokenLogRepository tokenLogRepository;
+	
+	@Autowired
+	CommunicationService communicationService;
+
 
 	public Student login(LoginRequestDTO loginRequestDto) {
 		Optional<Student> studentO = studentRepository.findByUserName(loginRequestDto.getUserName());
@@ -136,12 +145,15 @@ public class StudentService {
 		Optional<Student> studentOptional = studentRepository.findByEmail(email);
 		if (studentOptional.isPresent()) {
 			Student student = studentOptional.get();
-			String token = tokenlogservice.generateToken();
+
+			String token = tokenlogservice.generateToken(student);
 			studentRepository.save(student);
 
-			sendEmail(email, token);
+
+			communicationService.sendResetEmail(student.getFirstName() , student.getEmail(), token);
+			
 		} else {
-			throw new IllegalArgumentException("Email not found");
+			System.out.println("Email not found");
 		}
 	}
 
@@ -150,29 +162,54 @@ public class StudentService {
 		message.setTo(userEmail);
 		message.setSubject("Password Reset Request");
 		message.setText(
-				"Please use the following link to reset your password:  http://localhost:8080/change-password.html?token=/"
+				"Please use the following link to reset your password:  http://localhost:8080/change-password.html?token="
 						+ token);
 		javaMailSender.send(message);
 	}
 
-	
 
-	public String changePassword(String email, String newPassword, String confirmPassword) {
-        Optional<Student> studentOptional = studentRepository.findByEmail(email);
-        if (studentOptional.isPresent()) {
-            Student student = studentOptional.get();
-            if (!newPassword.equals(confirmPassword)) {
-                return "Error: New password and confirmed password do not match";
-            }
-            student.setPassword(newPassword);
-            studentRepository.save(student);
-            System.out.println("Password changed successfully for student with email: " + email);
-            return "Password changed successfully";
-        } else {
-            return "Error: Student with email " + email + " not found";
+       
+	 
+
+	public void resetPassword(String token, String newPassword, String confirmPassword) {
+        if (newPassword == null || newPassword.isEmpty() || confirmPassword == null || confirmPassword.isEmpty()) {
+            throw new IllegalArgumentException("Password fields cannot be empty");
         }
-    }
 
+        Optional<TokenLog> tokenLogOptional = tokenLogRepository.findByTokenAndLinkType(token, LinkType.STUDENT);
+        if (!tokenLogOptional.isPresent()) {
+            throw new IllegalArgumentException("Invalid token");
+        }
+
+        TokenLog tokenLog = tokenLogOptional.get();
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+
+        if (tokenLog.getLinkType() != LinkType.STUDENT) {
+            throw new IllegalArgumentException("Invalid link type for password reset");
+        }
+
+        
+        int studentId = tokenLog.getLinkId();
+
+        
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+        if (!studentOptional.isPresent()) {
+            throw new IllegalArgumentException("No student found with the provided token and link type");
+        }
+
+        // Update the password for the Student entity
+        Student student = studentOptional.get();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        student.setPassword(encodedPassword);
+        studentRepository.save(student);
+
+        // Delete the TokenLog after password reset
+        tokenLogRepository.delete(tokenLog);
+    }
 	public void saveStudent(Student student) {
 		studentRepository.save(student);
 	}

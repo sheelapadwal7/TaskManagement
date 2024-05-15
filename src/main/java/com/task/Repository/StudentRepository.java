@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.task.model.Student;
 
+
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
 	Optional<Student> findByUserName(String userName);
@@ -15,4 +16,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 	List<Student> findByAccountStatus(String accountStatus);
 
 	Optional<Student> findByEmail(String email);
+	
+	 Optional<Student> findById(int id);
+
+	
 }
