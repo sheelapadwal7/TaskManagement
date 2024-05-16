@@ -24,7 +24,7 @@ public class CommunicationUtil {
 			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 			
 			
-			helper.setText(body, true); // Use this or above line.
+			helper.setText(body, true); 
 			helper.setTo(toEmail);
 			helper.setSubject("TMS - " + subject);
 			mailSender.send(mimeMessage);
