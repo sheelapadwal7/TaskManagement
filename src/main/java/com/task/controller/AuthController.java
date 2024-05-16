@@ -1,5 +1,8 @@
 package com.task.controller;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +32,7 @@ import jakarta.servlet.http.HttpSession;
 public class AuthController {
 
 	@Autowired
-	StudentService studentservice;
+	StudentService studentService;
 
 	@Autowired
 	TokenLogService tokenlogservice;
@@ -50,13 +53,15 @@ public class AuthController {
 
 	}
 
+
 	/*
 	 * @PostMapping("/student/login") public LoginResponseDTO
 	 * studentLogin(@RequestBody LoginRequestDTO loginRequestDto) {
 	 * 
 	 * LoginResponseDTO loginResponseDto = new LoginResponseDTO();
 	 * 
-	 * // Logic flow start Student student = studentservice.login(loginRequestDto);
+
+	 * // Logic flow start Student student = studentService.login(loginRequestDto);
 	 * 
 	 * // if not found send error if (student == null) {
 	 * loginResponseDto.setStatus(false);
@@ -78,13 +83,17 @@ public class AuthController {
 	 * // Response send return loginResponseDto;
 	 * 
 	 * }
-	 * 
+<<<<<<< HEAD
 	 */
+	  
+	 
+
 	@PostMapping("/student/login")
 	public LoginResponseDTO studentLogin(@RequestBody LoginRequestDTO loginRequestDto) {
 
-		LoginResponseDTO loginResponseDto = new LoginResponseDTO();
+	    LoginResponseDTO loginResponseDto = new LoginResponseDTO();
 
+	   
 		if (loginRequestDto.getUserName() == null || loginRequestDto.getUserName().isEmpty()
 				|| loginRequestDto.getPassword() == null || loginRequestDto.getPassword().isEmpty()) {
 			loginResponseDto.setStatus(false);
@@ -92,45 +101,69 @@ public class AuthController {
 			return loginResponseDto;
 		}
 
-		Student student = studentservice.findStudentByUsername(loginRequestDto.getUserName());
+		Student student = studentService.findStudentByUsername(loginRequestDto.getUserName());
 
-		if (!studentservice.isStudentValid(student)) {
+		if (!studentService.isStudentValid(student)) {
 
-			return studentservice.createInvalidStudentResponse(loginResponseDto, student);
+			return studentService.createInvalidStudentResponse(loginResponseDto, student);
 		}
 
 		// Check if password matches
-		boolean passwordMatches = studentservice.verifyPassword(loginRequestDto.getPassword(), student.getPassword());
+		boolean passwordMatches = studentService.verifyPassword(loginRequestDto.getPassword(), student.getPassword());
 		if (!passwordMatches) {
 			// Increment login attempts
-			studentservice.handleIncorrectPassword(loginResponseDto, student);
+			studentService.handleIncorrectPassword(loginResponseDto, student);
 			return loginResponseDto;
 		}
 
 		// Reset login attempts upon successful login
-		studentservice.resetLoginAttempts(student);
+		studentService.resetLoginAttempts(student);
 
-		// Generate token or session
-		String token = tokenlogservice.generateToken(student);
+	        // Check if account is locked
+	        if (student.getAccountStatus().equals("locked")) {
+	            LocalDateTime currentTime = LocalDateTime.now();
+	            LocalDateTime unlockTime = student.getLockedDateTime().plusHours(24);
+	            if (currentTime.isBefore(unlockTime)) {
+	                throw new RuntimeException("Account locked. Please try again later.");
+	            } else {
+	                student.setAccountStatus("active");
+	                student.setLoginAttempts(0);
+	                student.setLockedDateTime(null);
+	            }
+	        }
 
-		// Response preparation
-		UserDTO userDto = new UserDTO();
-		userDto.setFirstName(student.getFirstName());
-		userDto.setUserName(student.getUserName());
 
-		loginResponseDto.setStatus(true);
-		loginResponseDto.setMessage("Student Login Successfully");
-		loginResponseDto.setUser(userDto);
-		loginResponseDto.setToken(token);
+	        // Check password
+	        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+	        if (passwordEncoder.matches(loginRequestDto.getPassword(), student.getPassword())) {
+	            // Reset login attempts and update last login
+	            student.setLoginAttempts(0);
+	            student.setLockedDateTime(LocalDateTime.now());
 
+	            // Generate token
+	            String token = tokenlogservice.generateToken(student);
+
+	            // Response preparation
+	            UserDTO userDto = new UserDTO();
+	            userDto.setFirstName(student.getFirstName());
+	            userDto.setUserName(student.getUserName());
+
+	            loginResponseDto.setStatus(true);
+	            loginResponseDto.setMessage("Student Login Successfully");
+	            loginResponseDto.setUser(userDto);
+	            loginResponseDto.setToken(token);
+
+	        } 
+	  
 		// Response send
 		return loginResponseDto;
+
 	}
 	
 	
 	@PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@RequestParam String email) {
-        studentservice.generateTokenAndSendEmail(email);
+        studentService.generateTokenAndSendEmail(email);
         return ResponseEntity.ok("Password reset link sent to your email");
     }
 	
@@ -150,17 +183,19 @@ public class AuthController {
 	 * "Password changed successfully"; }
 	 */
 	
+
 	@PostMapping("/reset")
     public ResponseEntity<String> resetPassword(@RequestParam("token") String token,
                                                  @RequestParam("newPassword") String newPassword,
                                                  @RequestParam("confirmPassword") String confirmPassword) {
         try {
-            studentservice.resetPassword(token, newPassword, confirmPassword);
+            studentService.resetPassword(token, newPassword, confirmPassword);
             return ResponseEntity.ok("Password reset successfully.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
 
 	
@@ -193,14 +228,13 @@ public class AuthController {
 		loginResponseDto.setStatus(true);
 		loginResponseDto.setMessage(" Admin Login Successfully");
 		loginResponseDto.setUser(userDto);
-		//loginResponseDto.setToken(token);
-		// Response preparation end
+		
 
 		// Response send
 		return loginResponseDto;
 
 	}
-
+ 
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(@RequestParam String token) {
 		if (tokenlogservice.invalidateToken(token)) {

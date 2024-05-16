@@ -29,7 +29,7 @@ import jakarta.transaction.Transactional;
 public class StudentService {
 
 	@Autowired
-	StudentRepository studentrepository;
+	StudentRepository studentRepository;
 	@Autowired
 	TaskRepository taskRepository;
 
@@ -48,8 +48,9 @@ public class StudentService {
 	@Autowired
 	CommunicationService communicationService;
 
+
 	public Student login(LoginRequestDTO loginRequestDto) {
-		Optional<Student> studentO = studentrepository.findByUserName(loginRequestDto.getUserName());
+		Optional<Student> studentO = studentRepository.findByUserName(loginRequestDto.getUserName());
 
 		System.out.println(studentO);
 		Student student = null;
@@ -69,7 +70,18 @@ public class StudentService {
 
 		return student;
 	}
+	
+	public boolean passwordMatches(String rawPassword, String encodedPassword) {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
+	
+	public void incrementLoginAttempts(Student student) {
+        student.setLoginAttempts(student.getLoginAttempts() + 1);
+        saveStudent(student);
+    }
 
+	    
 	public boolean isStudentValid(Student student) {
 		return student != null && !"LOCKED".equals(student.getAccountStatus());
 	}
@@ -90,7 +102,7 @@ public class StudentService {
 
 	public void lockAccount(Student student) {
 		student.setAccountStatus("LOCKED");
-		student.setLockDateTime(LocalDateTime.now());
+		student.setLockedDateTime(LocalDateTime.now());
 		saveStudent(student);
 	}
 
@@ -115,13 +127,13 @@ public class StudentService {
 	}
 
 	public boolean isAccountLocked(Student student) {
-		LocalDateTime lockDateTime = student.getLockDateTime();
+		LocalDateTime lockDateTime = student.getLockedDateTime();
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		return lockDateTime.plusHours(24).isBefore(currentDateTime);
 	}
 
 	public Student findStudentByUsername(String username) {
-		return studentrepository.findByUserName(username).orElse(null);
+		return studentRepository.findByUserName(username).orElse(null);
 	}
 
 	public boolean verifyPassword(String rawPassword, String encodedPassword) {
@@ -130,11 +142,12 @@ public class StudentService {
 	}
 
 	public void generateTokenAndSendEmail(String email) {
-		Optional<Student> studentOptional = studentrepository.findByEmail(email);
+		Optional<Student> studentOptional = studentRepository.findByEmail(email);
 		if (studentOptional.isPresent()) {
 			Student student = studentOptional.get();
+
 			String token = tokenlogservice.generateToken(student);
-			studentrepository.save(student);
+			studentRepository.save(student);
 
 
 			communicationService.sendResetEmail(student.getFirstName() , student.getEmail(), token);
@@ -149,12 +162,14 @@ public class StudentService {
 		message.setTo(userEmail);
 		message.setSubject("Password Reset Request");
 		message.setText(
-				"Please use the following link to reset your password:  http://localhost:8080/change-password.html?token="
+				"Please use the following link to reset your password:  http://localhost:8080/resetpassword.html?token="
 						+ token);
 		javaMailSender.send(message);
 	}
 
-	
+
+       
+	 
 
 	public void resetPassword(String token, String newPassword, String confirmPassword) {
         if (newPassword == null || newPassword.isEmpty() || confirmPassword == null || confirmPassword.isEmpty()) {
@@ -180,7 +195,7 @@ public class StudentService {
         int studentId = tokenLog.getLinkId();
 
         
-        Optional<Student> studentOptional = studentrepository.findById(studentId);
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
         if (!studentOptional.isPresent()) {
             throw new IllegalArgumentException("No student found with the provided token and link type");
         }
@@ -190,22 +205,22 @@ public class StudentService {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(newPassword);
         student.setPassword(encodedPassword);
-        studentrepository.save(student);
+        studentRepository.save(student);
 
         // Delete the TokenLog after password reset
         tokenLogRepository.delete(tokenLog);
     }
 	public void saveStudent(Student student) {
-		studentrepository.save(student);
+		studentRepository.save(student);
 	}
 
 	public List<Student> getStudent() {
-		return studentrepository.findAll();
+		return studentRepository.findAll();
 
 	}
 
 	public Optional<Student> getStudentById(Integer id) {
-		return studentrepository.findById(id);
+		return studentRepository.findById(id);
 	}
 
 	public Student addStudent(Student student) {
@@ -215,12 +230,12 @@ public class StudentService {
 		student.setPassword(hashedPassword);
 
 		// Save the student to the database Student savedStudent =
-		return studentrepository.save(student);
+		return studentRepository.save(student);
 
 	}
 
 	public Student update(Integer id, Student student) {
-		Student existingstudent = studentrepository.findById(id).orElse(null);
+		Student existingstudent = studentRepository.findById(id).orElse(null);
 		existingstudent.setFirstName(student.getFirstName());
 		existingstudent.setFirstName(student.getFirstName());
 		existingstudent.setEmail(student.getEmail());
@@ -229,11 +244,11 @@ public class StudentService {
 
 		existingstudent.setPassword(student.getPassword());
 		existingstudent.setUserName(student.getUserName());
-		return studentrepository.save(existingstudent);
+		return studentRepository.save(existingstudent);
 	}
 
 	public boolean deletestudent(Integer id) {
-		boolean exits = studentrepository.existsById(id);
+		boolean exits = studentRepository.existsById(id);
 		if (exits) {
 			return true;
 
