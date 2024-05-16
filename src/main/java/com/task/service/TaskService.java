@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import com.task.DTO.StudentTaskDTO;
 import com.task.Repository.AdminRepository;
 import com.task.Repository.StudentRepository;
+import com.task.Repository.StudentTaskRepository;
 import com.task.Repository.TaskRepository;
 import com.task.enums.SortCriteria;
 import com.task.enums.SortDirection;
 import com.task.enums.Status;
+import com.task.model.StudentTask;
 import com.task.model.Task;
 import com.task.model.specs.TaskSpecs;
 
@@ -31,6 +33,10 @@ public class TaskService {
 
 	@Autowired
 	AdminRepository adminRepository;
+	
+	
+	@Autowired
+	StudentTaskRepository studentTaskRepository;
 
 	/*
 	 * public List<Task> getAllTaskwithPagination(int page, int pageSize) { int
@@ -96,30 +102,20 @@ public class TaskService {
 		return taskRepository.save(task);
 	}
 
-	public boolean startTask(Integer taskId) {
-		Optional<Task> optionalTask = taskRepository.findById(taskId);
-		if (optionalTask.isPresent()) {
-			Task task = optionalTask.get();
-			task.setStatus(Status.INPROGRESS);
-			taskRepository.save(task);
-			return true;
-		} else {
-			return false;
-		}
-	}
+	/*
+	 * public boolean startTask(Integer taskId) { Optional<Task> optionalTask =
+	 * taskRepository.findById(taskId); if (optionalTask.isPresent()) { Task task =
+	 * optionalTask.get(); task.setStatus(Status.INPROGRESS);
+	 * taskRepository.save(task); return true; } else { return false; } }
+	 */
 
-	public boolean statusUpdateTask(Integer taskId, Task task) {
-		Optional<Task> optionalTask = taskRepository.findById(taskId);
-		if (optionalTask.isPresent()) {
-			Task task1 = optionalTask.get();
-			task1.setStatus(Status.COMPLETED);
-			task1.setInCompletionReason(task.getInCompletionReason());
-			taskRepository.save(task1);
-			return true;
-		} else {
-			return false;
-		}
-	}
+	/*
+	 * public boolean statusUpdateTask(Integer taskId, Task task) { Optional<Task>
+	 * optionalTask = taskRepository.findById(taskId); if (optionalTask.isPresent())
+	 * { Task task1 = optionalTask.get(); task1.setStatus(Status.COMPLETED);
+	 * task1.setInCompletionReason(task.getInCompletionReason());
+	 * taskRepository.save(task1); return true; } else { return false; } }
+	 */
 
 	public List<StudentTaskDTO> findTaskWithStudentTasks(Integer taskId) {
 		return taskRepository.findTaskWithStudentTasksJQL(taskId);
@@ -176,6 +172,22 @@ public class TaskService {
 		return false;
 	}
 
+	
+	 public void updateStudentTaskDTO(StudentTaskDTO studentTaskDTO) {
+	        // Convert StudentTaskDTO to StudentTask entity
+	        StudentTask studentTask = convertToEntity(studentTaskDTO);
+	        
+	        // Assuming you have a method in your repository to save or update a StudentTask entity
+	        studentTaskRepository.save(studentTask);
+	    }
+
+	    // Method to convert StudentTaskDTO to StudentTask entity
+	    private StudentTask convertToEntity(StudentTaskDTO studentTaskDTO) {
+	        StudentTask studentTask = new StudentTask();
+	        studentTask.setId(studentTaskDTO.getTaskId());
+	        
+	        return studentTask;
+	    }
 
 //	public boolean startTask1(Integer taskId) {
 //		Optional<Task> optionalTask = taskRepository.findById(taskId);
@@ -189,16 +201,11 @@ public class TaskService {
 //		}
 //	}
 
-	public boolean completeTask(Integer taskId) {
-		Optional<Task> optionalTask = taskRepository.findById(taskId);
-		if (optionalTask.isPresent()) {
-			Task task = optionalTask.get();
-			task.setStatus(Status.COMPLETED);
-			taskRepository.save(task);
-			return true;
-		} else {
-			return false;
-		}
-	}
+	/*
+	 * public boolean completeTask(Integer taskId) { Optional<Task> optionalTask =
+	 * taskRepository.findById(taskId); if (optionalTask.isPresent()) { Task task =
+	 * optionalTask.get(); task.setStatus(Status.COMPLETED);
+	 * taskRepository.save(task); return true; } else { return false; } }
+	 */
 
 }

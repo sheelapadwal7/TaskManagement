@@ -1,6 +1,11 @@
 package com.task.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,18 +88,47 @@ public class StudentTaskController {
 //    @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile file
     
     //RequestPart
-	public String updateTaskStatus(@PathVariable String id, 
-			@RequestParam(name= "myfile") MultipartFile file, 
-			@RequestParam Status status) {
-		
-		// validate static
-		// filename make sure jpg ya png
-		
-		// task id validate and data get
-		
-		//save base url in properties file http://localhost:8080/assets/
-		// file save drive (bg.jpg -> generate name -> 1-16052024.jpg) and path db
-		
-		return "";
-	}    
+    @PostMapping("/{id}/update")
+    public String updateTaskStatus(@PathVariable String id,
+                                   @RequestParam(name= "myfile") MultipartFile file,
+                                   @RequestParam Status status) {
+
+        // Validate file type
+        if (!file.getContentType().equals("image/jpeg") && !file.getContentType().equals("image/png")) {
+            return "Error: File type must be JPEG or PNG.";
+        }
+
+        // Validate task ID and retrieve data from database
+        StudentTaskDTO studentTaskDTO = taskService.getStudentTaskDTOById(id);
+        if (studentTaskDTO == null) {
+            return "Error: Task with ID " + id + " not found.";
+        }
+
+       
+        String baseUrl = "http://localhost:8080/assets/";
+
+        try {
+            // Save file to the assets folder with a generated name
+            String fileName = generateFileName(file.getOriginalFilename());
+            String filePath = "/path/to/your/assets/folder/" + fileName; // Replace this with your actual file path
+            File dest = new File(filePath);
+            file.transferTo(dest);
+
+            // Update task status and file path in the DTO
+            studentTaskDTO.setStatus(status);
+            studentTaskDTO.setFilePath(baseUrl + fileName); // Save only the file path in the DTO
+            taskService.updateStudentTaskDTO(studentTaskDTO);
+
+            return "Task updated successfully.";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Error occurred while saving the file.";
+        }
+    }
+
+    // Method to generate a unique file name
+    private String generateFileName(String originalFileName) {
+        // Implement your logic to generate a unique file name here
+        return "1-" + LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")) + originalFileName.substring(originalFileName.lastIndexOf('.'));
+    }
 }

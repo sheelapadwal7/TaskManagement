@@ -1,5 +1,7 @@
 package com.task.DTO;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.task.enums.Status;
 
 import jakarta.persistence.Column;
@@ -25,9 +27,46 @@ public class StudentTaskDTO {
     private String inCompletionReason;
 
     
-    // file save
+    private MultipartFile file;
+    
+    
+    private String filePath;
+    
+    
 
-    public StudentTaskDTO() {
+    public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public MultipartFile getFile() {
+		return file;
+	}
+
+	public void setFile(MultipartFile file) {
+		this.file = file;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public String getInCompletionReason() {
+		return inCompletionReason;
+	}
+
+	public void setInCompletionReason(String inCompletionReason) {
+		this.inCompletionReason = inCompletionReason;
+	}
+
+	public StudentTaskDTO() {
         
     }
     
