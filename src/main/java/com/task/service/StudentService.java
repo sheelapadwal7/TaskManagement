@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -21,7 +20,6 @@ import com.task.Repository.TaskRepository;
 
 import com.task.model.Student;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class StudentService {
