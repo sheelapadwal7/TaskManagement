@@ -88,8 +88,8 @@ public class StudentTaskController {
 //    @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile file
     
     //RequestPart
-    @PostMapping("/{id}/update")
-    public String updateTaskStatus(@PathVariable String id,
+    @PostMapping("/update/{id}")
+    public String updateTaskStatus(@PathVariable Integer id,
                                    @RequestParam(name= "myfile") MultipartFile file,
                                    @RequestParam Status status) {
 
@@ -99,18 +99,21 @@ public class StudentTaskController {
         }
 
         // Validate task ID and retrieve data from database
-        StudentTaskDTO studentTaskDTO = taskService.getStudentTaskDTOById(id);
+        StudentTaskDTO studentTaskDTO = taskService.getStudentTaskDTOById(id); 
         if (studentTaskDTO == null) {
             return "Error: Task with ID " + id + " not found.";
         }
 
-       
+        // Define base URL for the assets folder
         String baseUrl = "http://localhost:8080/assets/";
 
         try {
+            // Define assets folder path
+            String assetsFolderPath = "D:\\MyProject1\\TaskManagement\\src\\main\\resources\\static\\assets\\"; 
+
             // Save file to the assets folder with a generated name
             String fileName = generateFileName(file.getOriginalFilename());
-            String filePath = "/path/to/your/assets/folder/" + fileName; // Replace this with your actual file path
+            String filePath = assetsFolderPath + fileName; // Construct the file path
             File dest = new File(filePath);
             file.transferTo(dest);
 
@@ -129,6 +132,7 @@ public class StudentTaskController {
     // Method to generate a unique file name
     private String generateFileName(String originalFileName) {
         // Implement your logic to generate a unique file name here
-        return "1-" + LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")) + originalFileName.substring(originalFileName.lastIndexOf('.'));
+        return "image" + LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")) + originalFileName.substring(originalFileName.lastIndexOf('.'));
     }
+
 }

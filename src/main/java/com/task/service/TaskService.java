@@ -189,6 +189,32 @@ public class TaskService {
 	        return studentTask;
 	    }
 
+
+	    public StudentTaskDTO getStudentTaskDTOById(Integer id) {
+	        // Retrieve the StudentTask entity by its ID
+	        Optional<StudentTask> studentTaskOptional = studentTaskRepository.findById(id);
+	        
+	        // Check if the studentTask exists
+	        if (studentTaskOptional.isPresent()) {
+	            // Convert the StudentTask entity to StudentTaskDTO
+	            StudentTask studentTask = studentTaskOptional.get();
+	            StudentTaskDTO studentTaskDTO = convertToDTO(studentTask);
+	            return studentTaskDTO;
+	        } else {
+	            // Return null or throw an exception as per your application's requirement
+	            return null;
+	        }
+	    }
+
+	    // Method to convert StudentTask entity to StudentTaskDTO
+	    private StudentTaskDTO convertToDTO(StudentTask studentTask) {
+	        StudentTaskDTO studentTaskDTO = new StudentTaskDTO();
+	        studentTaskDTO.setTaskId(studentTask.getId());
+	       
+	        // Set other properties as needed
+	        return studentTaskDTO;
+	    }
+
 //	public boolean startTask1(Integer taskId) {
 //		Optional<Task> optionalTask = taskRepository.findById(taskId);
 //		if (optionalTask.isPresent()) {
