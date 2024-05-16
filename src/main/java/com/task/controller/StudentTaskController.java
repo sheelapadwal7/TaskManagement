@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.task.DTO.StudentTaskDTO;
+import com.task.enums.Status;
 import com.task.model.Student;
 import com.task.model.StudentTask;
 import com.task.model.Task;
@@ -21,6 +24,7 @@ import com.task.service.StudentTaskService;
 import com.task.service.TaskService;
 import com.task.service.TokenLogService;
 
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -74,4 +78,23 @@ public class StudentTaskController {
 
         return ResponseEntity.ok(taskWithStudentTasks);
 }
+    
+//    @RequestPart("user") @Valid User user,
+//    @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile file
+    
+    //RequestPart
+	public String updateTaskStatus(@PathVariable String id, 
+			@RequestParam(name= "myfile") MultipartFile file, 
+			@RequestParam Status status) {
+		
+		// validate static
+		// filename make sure jpg ya png
+		
+		// task id validate and data get
+		
+		//save base url in properties file http://localhost:8080/assets/
+		// file save drive (bg.jpg -> generate name -> 1-16052024.jpg) and path db
+		
+		return "";
+	}    
 }

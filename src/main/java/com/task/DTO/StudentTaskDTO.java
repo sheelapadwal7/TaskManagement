@@ -1,6 +1,10 @@
 package com.task.DTO;
 
+import com.task.enums.Status;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 public class StudentTaskDTO {
     
@@ -11,6 +15,17 @@ public class StudentTaskDTO {
     private String taskDescription;
     private Integer studentTaskId;
 
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
+
+
+    @Column(name = "incompletion_reason")
+    private String inCompletionReason;
+
+    
+    // file save
 
     public StudentTaskDTO() {
         
