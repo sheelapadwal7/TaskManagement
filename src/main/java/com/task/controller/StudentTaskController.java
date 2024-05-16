@@ -35,104 +35,103 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 public class StudentTaskController {
 
-    @Autowired
-    private StudentTaskService studentTaskService;
+	@Autowired
+	private StudentTaskService studentTaskService;
 
-    @Autowired
-    private TokenLogService tokenLogService;
-    
-    @Autowired
-    TaskService taskService;
+	@Autowired
+	private TokenLogService tokenLogService;
 
-    @PostMapping("/studenttasks")
-    public ResponseEntity<String> createStudentTask(@RequestBody StudentTask studenttask) {
-        Student student = studenttask.getStudent();
-        Task task = studenttask.getTask();
+	@Autowired
+	TaskService taskService;
+	
+	
 
+	@PostMapping("/studenttasks")
+	public ResponseEntity<String> createStudentTask(@RequestBody StudentTask studenttask) {
+		Student student = studenttask.getStudent();
+		Task task = studenttask.getTask();
 
-        // Check if student and task exist
-        if (student == null || task == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Student or Task not found");
-        }
+		// Check if student and task exist
+		if (student == null || task == null) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Student or Task not found");
+		}
 
-        // Save the student task
-        studentTaskService.saveStudentTask(student, task);
-        return ResponseEntity.status(HttpStatus.CREATED).body("StudentTask created successfully");
-    }
-    
-    @GetMapping("/tasks/studenttasks/{taskId}")
-    public ResponseEntity<List<StudentTaskDTO>> getTaskWithStudentTasks(HttpServletRequest request,  @PathVariable Integer taskId
-    		){
+		// Save the student task
+		studentTaskService.saveStudentTask(student, task);
+		return ResponseEntity.status(HttpStatus.CREATED).body("StudentTask created successfully");
+	}
+
+	@GetMapping("/tasks/studenttasks/{taskId}")
+	public ResponseEntity<List<StudentTaskDTO>> getTaskWithStudentTasks(HttpServletRequest request,
+			@PathVariable Integer taskId) {
 //    		, @RequestHeader("Authorization") String token) {
 //        TokenLog tokenLog = tokenLogService.getTokenLog(token);
-    	
-    	//passing data from filter to controller
-        TokenLog tokenLog = (TokenLog) request.getAttribute("tokenLog");
-        
-    	
-        // ACL
-        if(!tokenLogService.isStudent(tokenLog)) {
-        	return ResponseEntity.status(HttpStatusCode.valueOf(403)).body(null);
-        }
-        
-    	List<StudentTaskDTO> taskWithStudentTasks = taskService.findTaskWithStudentTasks2(taskId);
-        
-        if (taskWithStudentTasks.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
 
-        return ResponseEntity.ok(taskWithStudentTasks);
-}
-    
+		// passing data from filter to controller
+		TokenLog tokenLog = (TokenLog) request.getAttribute("tokenLog");
+
+		// ACL
+		if (!tokenLogService.isStudent(tokenLog)) {
+			return ResponseEntity.status(HttpStatusCode.valueOf(403)).body(null);
+		}
+
+		List<StudentTaskDTO> taskWithStudentTasks = taskService.findTaskWithStudentTasks2(taskId);
+
+		if (taskWithStudentTasks.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+
+		return ResponseEntity.ok(taskWithStudentTasks);
+	}
+
 //    @RequestPart("user") @Valid User user,
 //    @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile file
-    
-    //RequestPart
-    @PostMapping("/update/{id}")
-    public String updateTaskStatus(@PathVariable Integer id,
-                                   @RequestParam(name= "myfile") MultipartFile file,
-                                   @RequestParam Status status) {
 
-        // Validate file type
-        if (!file.getContentType().equals("image/jpeg") && !file.getContentType().equals("image/png")) {
-            return "Error: File type must be JPEG or PNG.";
-        }
+	// RequestPart
+	@PostMapping("/update/{id}")
+	public String updateTaskStatus(@PathVariable Integer id, @RequestParam(name = "myfile") MultipartFile file,
+			@RequestParam Status status) {
 
-        // Validate task ID and retrieve data from database
-        StudentTaskDTO studentTaskDTO = taskService.getStudentTaskDTOById(id); 
-        if (studentTaskDTO == null) {
-            return "Error: Task with ID " + id + " not found.";
-        }
+		// Validate file type
+		if (!file.getContentType().equals("image/jpeg") && !file.getContentType().equals("image/png")) {
+			return "Error: File type must be JPEG or PNG.";
+		}
 
-        // Define base URL for the assets folder
-        String baseUrl = "http://localhost:8080/assets/";
+		
+		StudentTaskDTO studentTaskDTO = taskService.getStudentTaskDTOById(id);
+		if (studentTaskDTO == null) {
+			return "Error: Task with ID " + id + " not found.";
+		}
 
-        try {
-            // Define assets folder path
-            String assetsFolderPath = "D:\\MyProject1\\TaskManagement\\src\\main\\resources\\static\\assets\\"; 
+		
+		String baseUrl = "http://localhost:8080/assets/";
 
-            // Save file to the assets folder with a generated name
-            String fileName = generateFileName(file.getOriginalFilename());
-            String filePath = assetsFolderPath + fileName; // Construct the file path
-            File dest = new File(filePath);
-            file.transferTo(dest);
+		try {
+			// Define assets folder path
+			String assetsFolderPath = "D:\\MyProject1\\TaskManagement\\src\\main\\resources\\static\\assets\\";
 
-            // Update task status and file path in the DTO
-            studentTaskDTO.setStatus(status);
-            studentTaskDTO.setFilePath(baseUrl + fileName); // Save only the file path in the DTO
-            taskService.updateStudentTaskDTO(studentTaskDTO);
+			String fileName = studentTaskService.generateFileName(file.getOriginalFilename());
+			String filePath = assetsFolderPath + fileName;
+			File dest = new File(filePath);
+			file.transferTo(dest);
 
-            return "Task updated successfully.";
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Error occurred while saving the file.";
-        }
-    }
+			studentTaskDTO.setStatus(status);
+			studentTaskDTO.setFilePath(baseUrl + fileName);
+//			taskService.updateStudentTaskDTO(studentTaskDTO);
+			
+			StudentTask st=new StudentTask();
+			st.setId(studentTaskDTO.getTaskId());
+			st.setStatus(studentTaskDTO.getStatus());
+			st.setFilePath(studentTaskDTO.getFilePath());
+			
+			studentTaskService.updateTask(st);
+			
 
-    // Method to generate a unique file name
-    private String generateFileName(String originalFileName) {
-        // Implement your logic to generate a unique file name here
-        return "image" + LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")) + originalFileName.substring(originalFileName.lastIndexOf('.'));
-    }
+			return "Task updated successfully.";
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "Error occurred while saving the file.";
+		}
+	}
 
 }
