@@ -29,7 +29,7 @@ public class Scheduler {
 
 			student.setAccountStatus("UNLOCK");
 			student.setLoginAttempts(0);
-			student.setLockDateTime(null);
+			student.setLockedDateTime(null);
 			studentRepository.save(student);
 
 			sendSMS(student.getContactNumber(), "Your account has been unlocked. Please login.");

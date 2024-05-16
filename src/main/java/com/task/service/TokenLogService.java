@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.task.Repository.TokenLogRepository;
 import com.task.enums.LinkType;
+import com.task.model.Student;
 import com.task.model.TokenLog;
 
 @Service
@@ -20,7 +21,7 @@ public class TokenLogService {
 	TokenLogRepository tokenLogRepository;
 
 	// Generate token
-	public String generateToken() {
+	public String generateToken(Student student) {
 		String token = UUID.randomUUID().toString();
 
 		LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(10);
@@ -28,7 +29,9 @@ public class TokenLogService {
 		TokenLog tokenLog = new TokenLog();
 		tokenLog.setToken(token);
 		tokenLog.setExpiryTime(expiryTime);
-		tokenLog.setValid(true); // Assuming token is initially valid
+		tokenLog.setValid(true); 
+		tokenLog.setLinkType(LinkType.STUDENT);
+		tokenLog.setLinkId(student.getId());
 
 		tokenLogRepository.save(tokenLog);
 

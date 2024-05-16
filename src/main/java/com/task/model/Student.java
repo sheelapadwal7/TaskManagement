@@ -47,14 +47,9 @@ public class Student {
 	@Column(name = "password")
 	private String password;
 
-	private String accountStatus;
-
-	private int loginAttempts;
-
-	private LocalDateTime lockDateTime;
-
-	@ManyToMany
-	private List<Task> tasks;
+	private String accountStatus; // "ACTIVE", "LOCKED"
+	private Integer loginAttempts;
+	private LocalDateTime lockedDateTime;
 
 	public String getAccountStatus() {
 		return accountStatus;
@@ -64,20 +59,27 @@ public class Student {
 		this.accountStatus = accountStatus;
 	}
 
-	public int getLoginAttempts() {
+	public Integer getLoginAttempts() {
 		return loginAttempts;
 	}
 
-	public void setLoginAttempts(int loginAttempts) {
+	public void setLoginAttempts(Integer loginAttempts) {
 		this.loginAttempts = loginAttempts;
 	}
 
-	public LocalDateTime getLockDateTime() {
-		return lockDateTime;
+	public LocalDateTime getLockedDateTime() {
+		return lockedDateTime;
 	}
 
-	public void setLockDateTime(LocalDateTime lockDateTime) {
-		this.lockDateTime = lockDateTime;
+	public void setLockedDateTime(LocalDateTime lockedDateTime) {
+		this.lockedDateTime = lockedDateTime;
+	}
+
+	@ManyToMany
+	private List<Task> tasks;
+
+	public void setLoginAttempts(int loginAttempts) {
+		this.loginAttempts = loginAttempts;
 	}
 
 	public List<Task> getTasks() {
