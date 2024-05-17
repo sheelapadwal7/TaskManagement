@@ -2,20 +2,22 @@ package com.task.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,11 +31,14 @@ import com.task.service.StudentTaskService;
 import com.task.service.TaskService;
 import com.task.service.TokenLogService;
 
-import jakarta.servlet.annotation.MultipartConfig;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class StudentTaskController {
+	
+	@Value("${base.url}")
+    private String baseUrl;
 
 	@Autowired
 	private StudentTaskService studentTaskService;
@@ -88,8 +93,8 @@ public class StudentTaskController {
 //    @RequestPart("file") @Valid @NotNull @NotBlank MultipartFile file
 
 	// RequestPart
-	@PostMapping("/update/{id}")
-	public String updateTaskStatus(@PathVariable Integer id, @RequestParam(name = "myfile") MultipartFile file,
+	@PutMapping("/update/{id}")
+	public String updateTaskStatus(@PathVariable Integer id, @RequestPart(name = "myfile") MultipartFile file,
 			@RequestParam Status status) {
 
 		// Validate file type
@@ -104,7 +109,6 @@ public class StudentTaskController {
 		}
 
 		
-		String baseUrl = "http://localhost:8080/assets/";
 
 		try {
 			// Define assets folder path
@@ -114,13 +118,15 @@ public class StudentTaskController {
 			String filePath = assetsFolderPath + fileName;
 			File dest = new File(filePath);
 			file.transferTo(dest);
+			
+			
 
 			studentTaskDTO.setStatus(status);
-			studentTaskDTO.setFilePath(baseUrl + fileName);
+			studentTaskDTO.setFilePath(baseUrl+fileName);
 //			taskService.updateStudentTaskDTO(studentTaskDTO);
 			
 			StudentTask st=new StudentTask();
-			st.setId(studentTaskDTO.getTaskId());
+			st.setId(studentTaskDTO.getTaskId());  
 			st.setStatus(studentTaskDTO.getStatus());
 			st.setFilePath(studentTaskDTO.getFilePath());
 			

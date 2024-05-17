@@ -177,7 +177,7 @@ public class TaskService {
 	        // Convert StudentTaskDTO to StudentTask entity
 	        StudentTask studentTask = convertToEntity(studentTaskDTO);
 	        
-	        // Assuming you have a method in your repository to save or update a StudentTask entity
+	      
 	        studentTaskRepository.save(studentTask);
 	    }
 
@@ -185,6 +185,7 @@ public class TaskService {
 	    private StudentTask convertToEntity(StudentTaskDTO studentTaskDTO) {
 	        StudentTask studentTask = new StudentTask();
 	        studentTask.setId(studentTaskDTO.getTaskId());
+	        
 	        
 	        return studentTask;
 	    }
