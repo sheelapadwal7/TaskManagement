@@ -90,6 +90,7 @@ public class TokenLogService {
 	}
 
 	
+	
 	  public List<TokenLog> getTokenLog() {
 	  
 	  return (List<TokenLog>) tokenLogRepository.findAll();

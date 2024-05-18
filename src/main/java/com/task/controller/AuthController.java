@@ -1,7 +1,6 @@
 package com.task.controller;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +23,6 @@ import com.task.service.AdminService;
 import com.task.service.StudentService;
 import com.task.service.TokenLogService;
 
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 

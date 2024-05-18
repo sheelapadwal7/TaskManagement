@@ -1,7 +1,6 @@
 /*
  * package com.task.security;
  * 
- * 
  * import java.io.IOException;
  * 
  * import org.springframework.beans.factory.annotation.Autowired; import
@@ -15,11 +14,9 @@
  * import jakarta.servlet.http.HttpServletRequest; import
  * jakarta.servlet.http.HttpServletResponse;
  * 
- * 
  * public class TokenFilter implements Filter {
  * 
  * @Autowired private TokenLogService tokenLogService;
- * 
  * 
  * @Autowired private JwtService jwtService;
  * 
@@ -59,5 +56,4 @@
  * @Override public void destroy() {
  * 
  * } }
- * 
  */
