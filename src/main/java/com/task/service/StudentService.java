@@ -78,6 +78,32 @@ public class StudentService {
         student.setLoginAttempts(student.getLoginAttempts() + 1);
         saveStudent(student);
     }
+	
+	public int getUserIdFromToken(String token) {
+		Optional<TokenLog> tokenLogOptional = tokenLogRepository.findByToken(token);
+
+		if (tokenLogOptional.isPresent()) {
+			TokenLog tokenLog = tokenLogOptional.get();
+			return tokenLog.getLinkId();
+			// Assuming the user ID is stored in the TokenLog entity
+		}
+		return -1; // Return a default value indicating user ID not found
+	}
+
+	public boolean updatePassword(int id, String newPassword) {
+		Optional<Student> userOptional = studentRepository.findById(id);
+
+		if (userOptional.isPresent()) {
+			Student student = userOptional.get();
+			student.setPassword(newPassword); // Update the password
+			studentRepository.save(student); // Save the updated user entity
+			return true;
+			// Password updated successfully
+		} else {
+			return false; // User not found
+		}
+	}
+
 
 	    
 	public boolean isStudentValid(Student student) {

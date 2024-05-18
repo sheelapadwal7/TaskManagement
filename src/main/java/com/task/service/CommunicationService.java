@@ -15,6 +15,7 @@ public class CommunicationService {
 	public void sendResetEmail(String userName, String toEmail, String token) {
 		
 		String tokenLink = "http://localhost:8080/auth/web/change-password/" + token;
+		//String tokenLink = "http://localhost:8080/resetpassword.html/" + token;
 		
 		String subject = "Reset Email";
 		String body = "Hi ${user},<br/><br/>"

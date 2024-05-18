@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,14 +30,13 @@ import com.task.service.StudentTaskService;
 import com.task.service.TaskService;
 import com.task.service.TokenLogService;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class StudentTaskController {
-	
+
 	@Value("${base.url}")
-    private String baseUrl;
+	private String baseUrl;
 
 	@Autowired
 	private StudentTaskService studentTaskService;
@@ -48,8 +46,6 @@ public class StudentTaskController {
 
 	@Autowired
 	TaskService taskService;
-	
-	
 
 	@PostMapping("/studenttasks")
 	public ResponseEntity<String> createStudentTask(@RequestBody StudentTask studenttask) {
@@ -102,13 +98,10 @@ public class StudentTaskController {
 			return "Error: File type must be JPEG or PNG.";
 		}
 
-		
 		StudentTaskDTO studentTaskDTO = taskService.getStudentTaskDTOById(id);
 		if (studentTaskDTO == null) {
 			return "Error: Task with ID " + id + " not found.";
 		}
-
-		
 
 		try {
 			// Define assets folder path
@@ -118,20 +111,17 @@ public class StudentTaskController {
 			String filePath = assetsFolderPath + fileName;
 			File dest = new File(filePath);
 			file.transferTo(dest);
-			
-			
 
 			studentTaskDTO.setStatus(status);
-			studentTaskDTO.setFilePath(baseUrl+fileName);
+			studentTaskDTO.setFilePath(fileName);
 //			taskService.updateStudentTaskDTO(studentTaskDTO);
-			
-			StudentTask st=new StudentTask();
-			st.setId(studentTaskDTO.getTaskId());  
+
+			StudentTask st = new StudentTask();
+			st.setId(studentTaskDTO.getTaskId());
 			st.setStatus(studentTaskDTO.getStatus());
 			st.setFilePath(studentTaskDTO.getFilePath());
-			
+
 			studentTaskService.updateTask(st);
-			
 
 			return "Task updated successfully.";
 		} catch (IOException e) {
