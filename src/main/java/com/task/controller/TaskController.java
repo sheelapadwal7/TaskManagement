@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.task.DTO.StudentTaskDTO;
 import com.task.enums.SortCriteria;
 import com.task.enums.SortDirection;
 import com.task.enums.Status;
+import com.task.model.StudentTask;
 import com.task.model.Task;
 import com.task.service.TaskService;
 

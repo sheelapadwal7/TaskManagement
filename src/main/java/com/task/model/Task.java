@@ -32,16 +32,6 @@ public class Task {
     @Column(name = "task_desc")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private Status status;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "date")
-    private SortCriteria sortCriteria;
-
-    @Column(name = "incompletion_reason")
-    private String inCompletionReason;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "tasks", fetch = FetchType.LAZY)
@@ -69,30 +59,6 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public SortCriteria getSortCriteria() {
-        return sortCriteria;
-    }
-
-    public void setSortCriteria(SortCriteria sortCriteria) {
-        this.sortCriteria = sortCriteria;
-    }
-
-    public String getInCompletionReason() {
-        return inCompletionReason;
-    }
-
-    public void setInCompletionReason(String inCompletionReason) {
-        this.inCompletionReason = inCompletionReason;
     }
 
     public List<Student> getStudents() {

@@ -31,27 +31,23 @@ public class StudentController {
 @Autowired
 TaskService taskService;
 
-	@PostMapping("/start/{taskId}")
-	public ResponseEntity<String> startTask(@PathVariable Integer taskId) {
-		boolean success = taskService.startTask(taskId);
-		if (success) {
-			return ResponseEntity.status(HttpStatus.OK).body("Task started successfully");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
-		}
-	}
-
-	@PostMapping("/update/{taskId}")
-	public ResponseEntity<String> statusUpdateTask(@PathVariable Integer taskId,@RequestBody Task task) {
-		boolean success = taskService.statusUpdateTask(taskId,task);
-		if (success) {
-			return ResponseEntity.status(HttpStatus.OK).body("Task updated successfully");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
-		}
-	}
-
-	@GetMapping("/get")
+/*
+ * @PostMapping("/start/{taskId}") public ResponseEntity<String>
+ * startTask(@PathVariable Integer taskId) { boolean success =
+ * taskService.startTask(taskId); if (success) { return
+ * ResponseEntity.status(HttpStatus.OK).body("Task started successfully"); }
+ * else { return
+ * ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found"); } }
+ * 
+ * @PostMapping("/update/{taskId}") public ResponseEntity<String>
+ * statusUpdateTask(@PathVariable Integer taskId,@RequestBody Task task) {
+ * boolean success = taskService.statusUpdateTask(taskId,task); if (success) {
+ * return
+ * ResponseEntity.status(HttpStatus.OK).body("Task updated successfully"); }
+ * else { return
+ * ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found"); } }
+ * 
+ */	@GetMapping("/get")
 	public ResponseEntity<?> getStudent(@RequestBody Student student) {
 
 		List<Student> students = studentservice.getStudent();

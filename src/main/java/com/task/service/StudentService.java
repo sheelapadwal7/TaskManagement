@@ -160,7 +160,7 @@ public class StudentService {
 		message.setTo(userEmail);
 		message.setSubject("Password Reset Request");
 		message.setText(
-				"Please use the following link to reset your password:  http://localhost:8080/change-password.html?token="
+				"Please use the following link to reset your password:  http://localhost:8080/resetpassword.html?token="
 						+ token);
 		javaMailSender.send(message);
 	}

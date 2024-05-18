@@ -26,54 +26,55 @@ public class AuthWebController {
     @Autowired
     StudentRepository studentRepository;
 
-    @GetMapping("change-password/{token}")
+    @GetMapping("/change-password/{token}")
     public String changePassword(@PathVariable String token, Model model) {
         boolean isValidToken = tokenLogService.isValidToken(token);
-
-        model.addAttribute("isValidToken", isValidToken);
-        model.addAttribute("token", token);
-        model.addAttribute("changePasswordDTO", new ChangePasswordDTO()); // Added a new model attribute
-
-        return "redirect:/resetpassword.html";
+        model.addAttribute("isError", !isValidToken);
+        model.addAttribute("status", false);
+        model.addAttribute("changePasswordDTO", new ChangePasswordDTO());
+        return "resetpassword";
     }
+
 
     @PostMapping("/change-password/{token}")
     public String changePasswordSave(@PathVariable String token, @ModelAttribute("changePasswordDTO") ChangePasswordDTO change,
                                      Model model) {
         boolean isValidToken = tokenLogService.isValidToken(token);
-        boolean isChangesValid = validateChanges(change);
 
-        if (isValidToken && isChangesValid) {
-            String username = getUsernameFromToken(token);
-            boolean isPasswordUpdated = updatePassword(username, change.getPassword());
+    	model.addAttribute("isError", false);
+        if(!isValidToken) {
+        	model.addAttribute("isError", !isValidToken);
 
-            if (isPasswordUpdated) {
-                model.addAttribute("status", true);
-            } else {
-                model.addAttribute("error", "Failed to update password. Please try again.");
-            }
-        } else {
-            // Handle invalid token or changes
-            if (!isValidToken) {
-                model.addAttribute("error", "Invalid token. Please try again.");
-            }
-            if (!isChangesValid) {
-                model.addAttribute("error", "Invalid changes. Please fill all required fields.");
-            }
+            return "resetpassword";
+        }
+        
+        
+        boolean isChangesValid = 
+        		change != null && 
+        		change.getNewPassword() != null && 
+        		change.getConfirmPassword() != null && 
+        		change.getNewPassword().equals(change.getConfirmPassword());
+
+        if (!isChangesValid) {
+        	model.addAttribute("status", false);
+        	model.addAttribute("message", "password is not valid or matching with confirm password");
+            return "resetpassword";
         }
 
-        model.addAttribute("isValidToken", isValidToken);
-        model.addAttribute("token", token);
-
-        if (isValidToken && isChangesValid) {
-            return "redirect:/resetpassword.html"; // Redirect to success page
-        } else {
-            return "redirect:/error.html"; // Redirect to error page
+        String username = getUsernameFromToken(token);
+        boolean isPasswordUpdated = updatePassword(username, change.getNewPassword());
+        
+        if(!isPasswordUpdated) {
+        	model.addAttribute("status", false);
+        	model.addAttribute("message", "password is not updating");
+            return "resetpassword";
         }
-    }
+        
+        // invalidate the token
 
-    private boolean validateChanges(ChangePasswordDTO change) {
-        return change != null && change.getPassword() != null;
+    	model.addAttribute("status", true);
+    	model.addAttribute("message", "successfully changed");
+        return "resetpassword";
     }
 
     private String getUsernameFromToken(String token) {

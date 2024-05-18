@@ -43,7 +43,7 @@ public class CommunicationUtil {
 
 			
 			
-			helper.setText(body, true); // Use this or above line.
+			helper.setText(body, true); 
 			helper.setTo(toEmail);
 			helper.setSubject("TMS - " + subject);
 			mailSender.send(mimeMessage);
