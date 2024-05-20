@@ -1,5 +1,6 @@
 package com.task.model;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,13 +32,26 @@ public class Task {
 
     @Column(name = "task_desc")
     private String description;
+    
+    @Column(name = "completion_date")
+    private LocalDate completionDate;
 
 
     @JsonIgnore
     @ManyToMany(mappedBy = "tasks", fetch = FetchType.LAZY)
     private List<Student> students;
 
-    public Integer getId() {
+    
+    
+    public LocalDate getCompletionDate() {
+		return completionDate;
+	}
+
+	public void setCompletionDate(LocalDate completionDate) {
+		this.completionDate = completionDate;
+	}
+
+	public Integer getId() {
         return id;
     }
 
