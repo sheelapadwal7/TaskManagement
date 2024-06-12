@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -37,17 +36,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.task.DTO.StudentTaskDTO;
 import com.task.DTO.TaskResponseDTO;
 import com.task.Repository.TaskRepository;
 import com.task.enums.SortCriteria;
 import com.task.enums.SortDirection;
 import com.task.enums.Status;
-import com.task.model.StudentTask;
 import com.task.model.Task;
 import com.task.service.TaskService;
 
-import jakarta.annotation.Resource;
 
 @RestController
 @RequestMapping("/task")
